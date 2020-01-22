@@ -58,7 +58,7 @@
    <abstract>
       <t>   This document complements RFC 8138 and dedicates a bit in the RPL
       configuration option defined in RFC 6550 to indicate whether RFC 8138
-      compression is used within the RPL instance.
+      compression is used within the RPL Instance.
       </t>
    </abstract>
 </front>
@@ -72,7 +72,7 @@
       </t>
       <t>   This document complements RFC 8138 and dedicates a bit in the RPL
       configuration option to indicate whether RFC 8138 compression should be
-      used within the RPL instance. When the bit is not set, source nodes that
+      used within the RPL Instance. When the bit is not set, source nodes that
       support RFC 8138 should refrain from using the compression unless the
       information is superseded by configuration.
       </t>
@@ -150,9 +150,9 @@
    <section><name>Transition Scenarios</name>
    <t>
     A node that supports <xref target='RFC8138'/> but not this specification
-    can only be used in an homogeneous network and an upgrade requires a
+    can only be used in a homogeneous network and an upgrade requires a
     "flag day" where all nodes are updated and then the network is rebooted
-    with implicitely RFC 8138 compression turned on with the "T" flag set on.
+    with implicitly RFC 8138 compression turned on with the "T" flag set on.
    </t>
 
    <t>
@@ -192,7 +192,7 @@
    feature to join as leaf only. This specification reiterates that a
    node that is configured to operate in an Instance but does not support a
    value for a known parameter that is mandatory for routing MUST NOT operate
-   as a router but MAY still joins as a leaf. Note that a legacy node will not
+   as a router but MAY still join as a leaf. Note that a legacy node will not
    recognize when a reserved field is now used and will not turn to a leaf
    when that happens.
    </t>
@@ -237,14 +237,14 @@
 
    <section anchor='sic'><name>Single Instance Scenario</name>
    <t>
-   In a single instance scenario, nodes that support RFC 8138 are configured
-   with a new OCP, that may use the same OF operation or a variation of it. when
-   it finally sets the "T" flag, the root also migrates to the new OCP. As a
-   result, nodes that do not support RFC 8138 join as leaves and do not forward
-   packets anymore. The leaves generate packets without compression. The parents
+   In a Single Instance Scenario, nodes that support RFC 8138 are configured
+   with a new OCP, that may use the same OF operation or a variation of it. The
+   root migrates to the new OCP when it finally sets the "T" flag. As a result,
+   nodes that do not support RFC 8138 join as leaves and do not forward packets
+   anymore. The leaves generate packets without compression. The parents
    - which supports RFC 8138 - may encapsulate the packets using RFC 8138 if
    needed. The other way around, the root encapsulates packets to the leaves all
-   the way to the parent, which decapsulates and distribute the uncompresses
+   the way to the parent, which decapsulates and distribute the uncompressed
    inner packet to the leaf.
    </t>
 
@@ -289,7 +289,7 @@
    Nodes that support RFC 8138 participate to both Instances but favor the new
    Instance for the traffic that they source.
    On the other hand, nodes that only support the uncompressed format would
-   either not be configured for the new instance, or would be configured to join
+   either not be configured for the new Instance, or would be configured to join
    it as leaves only.
    </t>
 
