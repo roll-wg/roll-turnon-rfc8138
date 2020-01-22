@@ -191,7 +191,7 @@
    Code Point (OCP) or some other parameters in the configuration option.
    <xref target='I-D.ietf-roll-useofrplinfo'/> indicates that the node may also
    join as a RUL, in which case it refrains from  participating to RPL and
-   depends on the 6LR to ensure connectivity regardless on the way the RPL
+   depends on the 6LR to ensure connectivity regardless of the way the RPL
    network is operated.
    </t>
 

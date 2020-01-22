@@ -194,7 +194,7 @@ Internet-Draft              Enabling RFC 8138               January 2020
    other parameters in the configuration option.  [USEofRPLinfo]
    indicates that the node may also join as a RUL, in which case it
    refrains from participating to RPL and depends on the 6LR to ensure
-   connectivity regardless on the way the RPL network is operated.
+   connectivity regardless of the way the RPL network is operated.
 
    This means that changing the OCP in a DODAG can be used to force
    nodes that do not support a particular feature to join as leaf only.
