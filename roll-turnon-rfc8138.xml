@@ -13,8 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-02" >
-
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-02">
 <front>
 
    <title abbrev='Enabling RFC 8138'>Configuration option for RFC 8138</title>
@@ -166,9 +165,12 @@
     node that supports this specification in a network with RFC 8138 compression
     turned off. But it cannot forward compressed packets and therefore it cannot
     act as a router in a network with RFC 8138 compression turned on. It may
-    remain connected to that network as a leaf and generate uncompressed packets
-    as long as imcoming packets are decapsulated by the parent and delivered in
-    uncompressed form.
+    remain connected to that network as a leaf and generate uncompressed packets.
+    The leaf can receive packets if they are delivered by the parent 6LR in the
+    uncompressed form. This requires a knowledge by the 6LR that the leaf does
+    not support RFC 8138.
+    A RPL-Unaware-Leaf (RUL) <xref target='I-D.ietf-roll-useofrplinfo'/>
+    is an external target and by default is not expected to support RFC 8138.
    </t>
 
    <t>
@@ -176,9 +178,10 @@
    NOT modify this information when propagating the DODAG Configuration option".
    In other words, the configuration option is a way for the root to configure
    the LLN nodes but it cannot be used by a parent to advertise its capabilities
-   down the DODAG. It results whether a parent supports RFC 8138 is not known
-   by the child with the current level of specifications, and a child cannot
-   favor a parent based on a particular support.
+   down the DODAG. A parent propagates the "T" flag as set whether it supports
+   RFC 8138 or not. The setting of the "T" flag can thus not be
+   used as an indication of the support by the sender, and a child cannot favor
+   a parent based on it.
    </t>
 
    <t>Sections 8.5 and 9.2 of <xref target='RFC6550'/> also suggests that a
@@ -186,11 +189,17 @@
    node does not support the Mode of Operation
    of a RPL Instance, the Objective Function (OF) as indicated by the Objective
    Code Point (OCP) or some other parameters in the configuration option.
-   But the node is also free to refrain from joining
-   an Instance when a parameter is not suitable. This means that changing the
+   <xref target='I-D.ietf-roll-useofrplinfo'/> indicates that the node may also
+   join as a RUL, in which case it refrains from  participating to RPL and
+   depends on the 6LR to ensure connectivity regardless on the way the RPL
+   network is operated.
+   </t>
+
+   <t>
+   This means that changing the
    OCP in a DODAG can be used to force nodes that do not support a particular
    feature to join as leaf only. This specification reiterates that a
-   node that is configured to operate in an Instance but does not support a
+   node that is configured to operate in a RPL Instance but does not support a
    value for a known parameter that is mandatory for routing MUST NOT operate
    as a router but MAY still join as a leaf. Note that a legacy node will not
    recognize when a reserved field is now used and will not turn to a leaf
@@ -212,14 +221,14 @@
    When the "T" flag is turned on in the configuration option by the root, the
    information slowly percolates through the DODAG as the DIO gets propagated.
    Some nodes will see the flag and start sourcing packets in the compressed
-   form while other nodes in the same instance are still not aware of it.
+   form while other nodes in the same RPL Instance are still not aware of it.
    Conversely, in non-storing mode, the root will start using RFC 8138 with a
    SRH-6LoRH that routes all the way to the last router or possibly to the leaf,
    if the leaf supports RFC 8138.
    </t>
 
    <t>
-   This is why it is required that all the routers in the Instance support
+   This is why it is required that all the routers in the RPL Instance support
    <xref target='RFC8138'/> at the time of the switch, and all nodes that do not
    support <xref target='RFC8138'/> only operate as leaves.
    </t>
@@ -239,7 +248,7 @@
    <t>
    In a Single Instance Scenario, nodes that support RFC 8138 are configured
    with a new OCP, that may use the same OF operation or a variation of it. The
-   root migrates to the new OCP when it finally sets the "T" flag. As a result,
+   root sets the "T" flag at the time it migrates to the new OCP. As a result,
    nodes that do not support RFC 8138 join as leaves and do not forward packets
    anymore. The leaves generate packets without compression. The parents
    - which supports RFC 8138 - may encapsulate the packets using RFC 8138 if
@@ -275,11 +284,11 @@
 
    </section> <!--"Single Instance Scenario"-->
 
-   <section anchor='dic'><name>Double Instance Scenario</name>
+   <section anchor='dic'><name>Double RPL Instances Scenario</name>
    <t>An alternate to the Single Instance Scenario is to deploy an additional
    Instance for the nodes that support <xref target='RFC8138'/>.
-   The two instances operate as ships-in-the-night as specified in
-   <xref target='RFC6550'/>.  The preexisting Instance that does not use
+   The two RPL Instances operate independently as specified
+   in <xref target='RFC6550'/>.  The preexisting Instance that does not use
    <xref target='RFC8138'/>, whereas the new Instance does. This is signaled
    by the "T" flag which is only set in the configuration option in DIO messages
    in the new Instance.
@@ -362,11 +371,13 @@
 
 <back>
 
+   <displayreference   target="I-D.ietf-roll-useofrplinfo"     to="USEofRPLinfo"/>
    <displayreference   target="I-D.ietf-roll-mopex-cap"        to="MOP-EXT"/>
    <references><name>Normative References</name>
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/> <!-- RPL -->
+      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-useofrplinfo.xml'/>
    </references>
    <references><name>Informative References</name>
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
