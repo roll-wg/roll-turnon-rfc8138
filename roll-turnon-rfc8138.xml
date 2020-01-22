@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent">
+
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="no"?>
+<?rfc subcompact="no"?>
+<?rfc authorship="yes"?>
+<?rfc tocappendix="yes"?>
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-02" >
+
+<front>
+
+   <title abbrev='Enabling RFC 8138'>Configuration option for RFC 8138</title>
+
+
+   <author fullname='Pascal Thubert' initials='P.' role='editor' surname='Thubert'>
+      <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
+      <address>
+         <postal>
+            <street>Building D</street>
+            <street>45 Allee des Ormes - BP1200 </street>
+            <city>MOUGINS - Sophia Antipolis</city>
+            <code>06254</code>
+            <country>FRANCE</country>
+         </postal>
+         <phone>+33 497 23 26 34</phone>
+         <email>pthubert@cisco.com</email>
+      </address>
+   </author>
+
+          <author initials='L' surname='Zhao' fullname='Li Zhao'>
+          <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
+          <address>
+             <postal>
+                <street>Xinsi Building</street>
+                <street>No. 926 Yi Shan Rd </street>
+                <city>SHANGHAI </city>
+                <code>200233</code>
+                <country>CHINA</country>
+             </postal>
+             <email>liz3@cisco.com</email>
+          </address>
+       </author>
+
+
+
+   <date/>
+   <area>Routing Area</area>
+   <workgroup>ROLL</workgroup>
+   <keyword>Draft</keyword>
+   <abstract>
+      <t>   This document complements RFC 8138 and dedicates a bit in the RPL
+      configuration option defined in RFC 6550 to indicate whether RFC 8138
+      compression is used within the RPL instance.
+      </t>
+   </abstract>
+</front>
+
+<middle>
+   <section><name>Introduction</name>
+      <t>  The transition to <xref target='RFC8138'/> in a network can only be
+      done when all nodes support the specification. In a mixed case with both
+      RFC8138-capable and non-capable nodes, the compression should be turned
+      off.
+      </t>
+      <t>   This document complements RFC 8138 and dedicates a bit in the RPL
+      configuration option to indicate whether RFC 8138 compression should be
+      used within the RPL instance. When the bit is not set, source nodes that
+      support RFC 8138 should refrain from using the compression unless the
+      information is superseded by configuration.
+      </t>
+   </section><!-- title="Introduction"-->
+
+
+<section anchor='bcp'><name>BCP 14</name>
+<t>
+
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+    "OPTIONAL" in this document are to be interpreted as described in BCP 14
+    <xref target='RFC2119'/><xref target='RFC8174'/> when, and only when, they
+    appear in all capitals, as shown here.
+
+</t>
+</section>	<!-- end section "BCP 14" -->
+
+
+   <section><name>Updating RFC 6550</name>
+   <t>
+   RPL defines a configuration option that is registered to
+   IANA in section 20.14. of <xref target='RFC6550'/>. This specification
+   defines a new flag "Enable RFC8138 Compression" (T) that is encoded in
+   one of the reserved control bits in the option. The new flag is set to turn
+   on the use of the compression of RPL artifacts with RFC 8138. The bit
+   position of the "T" flag is indicated in <xref target='iana'/>.
+   </t>
+   <t>
+   Section 6.3.1.
+   of <xref target='RFC6550'/> defines a 3-bit Mode of Operation (MOP) in the
+   DIO Base Object. The new "T" flag is defined only for MOP value between 0 to
+   6. For a MOP value of 7 or above, the flag MAY indicate something different
+   and MUST NOT be interpreted as "Enable RFC8138 Compression" unless the
+   specification of the MOP indicates to do so.
+   </t>
+   </section><!-- Updating RFC 6550-->
+
+
+   <section><name>Updating RFC 8138</name>
+
+   <t>
+   This document specifies controls that enable and disable the use of the
+   <xref target='RFC8138'/> compression in a RPL Instance. Arguably, this could
+   have been done in <xref target='RFC8138'/> itself.
+   </t>
+
+   <t>
+   A node that supports this specification SHOULD source packets in the
+   compressed form using <xref target='RFC8138'/> if the new "T" flag is set in
+   the RPL configuration option from its parents. Failure to do so will result
+   in larger packets, yields higher risks of loss and may cause a fragmentation.
+   </t>
+
+   <t>
+   A node that supports this specification SHOULD refrain from sourcing
+   packets in the compressed form using <xref target='RFC8138'/> if the "T" flag
+   is reset. This behaviour can be overridden by a configuration of the
+   node in order to cope with intermediate implementations of the root that
+   support <xref target='RFC8138'/> but not this specification and cannot set
+   the "T" flag.
+   </t>
+
+   <t>
+   The decision of using RFC 8138 to compress a packet is made at the source
+   depending on its capabilities and its knowledge of the state of the "T" flag.
+   A router MUST forward the packet in the form that the source used, either
+   compressed or uncompressed. A router that encapsulates a packet is the
+   source of the resulting packet and the rules above apply to it in that case.
+   </t>
+
+   </section><!-- Updating RFC 8138 -->
+
+
+   <section><name>Transition Scenarios</name>
+   <t>
+    A node that supports <xref target='RFC8138'/> but not this specification
+    can only be used in an homogeneous network and an upgrade requires a
+    "flag day" where all nodes are updated and then the network is rebooted
+    with implicitely RFC 8138 compression turned on with the "T" flag set on.
+   </t>
+
+   <t>
+    A node that supports this specification can work in a network with RFC 8138
+    compression turned on or off with the "T" flag set accordingly and in a
+    network in transition from off to on or on to off (see <xref target='mig'/>).
+   </t>
+
+   <t>
+    A node that does not support <xref target='RFC8138'/> can interoperate with a
+    node that supports this specification in a network with RFC 8138 compression
+    turned off. But it cannot forward compressed packets and therefore it cannot
+    act as a router in a network with RFC 8138 compression turned on. It may
+    remain connected to that network as a leaf and generate uncompressed packets
+    as long as imcoming packets are decapsulated by the parent and delivered in
+    uncompressed form.
+   </t>
+
+   <t>
+   <xref target='RFC6550'/> states that "Nodes other than the DODAG root MUST
+   NOT modify this information when propagating the DODAG Configuration option".
+   In other words, the configuration option is a way for the root to configure
+   the LLN nodes but it cannot be used by a parent to advertise its capabilities
+   down the DODAG. It results whether a parent supports RFC 8138 is not known
+   by the child with the current level of specifications, and a child cannot
+   favor a parent based on a particular support.
+   </t>
+
+   <t>Sections 8.5 and 9.2 of <xref target='RFC6550'/> also suggests that a
+   RPL-aware node may attach to a DODAG as a leaf node only, e.g., when a
+   node does not support the Mode of Operation
+   of a RPL Instance, the Objective Function (OF) as indicated by the Objective
+   Code Point (OCP) or some other parameters in the configuration option.
+   But the node is also free to refrain from joining
+   an Instance when a parameter is not suitable. This means that changing the
+   OCP in a DODAG can be used to force nodes that do not support a particular
+   feature to join as leaf only. This specification reiterates that a
+   node that is configured to operate in an Instance but does not support a
+   value for a known parameter that is mandatory for routing MUST NOT operate
+   as a router but MAY still joins as a leaf. Note that a legacy node will not
+   recognize when a reserved field is now used and will not turn to a leaf
+   when that happens.
+   </t>
+
+   <t>
+   The intent for this specification is to perform a migration once and for all
+   without the need for a flag day. In particular it is not the intention to
+   undo the setting of the "T" flag, and though it is possible to roll back
+   (see <xref target='rb'/>), adding nodes that do not support
+   <xref target='RFC8138'/> after a roll back may be problematic if the roll
+   back is not fully complete (see caveats in <xref target='sic'/>).
+   </t>
+
+   <section anchor='mig'><name>Inconsistent State While Migrating</name>
+
+   <t>
+   When the "T" flag is turned on in the configuration option by the root, the
+   information slowly percolates through the DODAG as the DIO gets propagated.
+   Some nodes will see the flag and start sourcing packets in the compressed
+   form while other nodes in the same instance are still not aware of it.
+   Conversely, in non-storing mode, the root will start using RFC 8138 with a
+   SRH-6LoRH that routes all the way to the last router or possibly to the leaf,
+   if the leaf supports RFC 8138.
+   </t>
+
+   <t>
+   This is why it is required that all the routers in the Instance support
+   <xref target='RFC8138'/> at the time of the switch, and all nodes that do not
+   support <xref target='RFC8138'/> only operate as leaves.
+   </t>
+
+   <t>
+   Setting the "T" flag is ultimately the responsibility of the network
+   administrator. In a case of upgrading a network to turn the compression on,
+   the network SHOULD be operated with the "T" flag reset until all targeted
+   nodes are upgraded to support this specification.  <xref target='sic'/>
+   and <xref target='dic'/> provide possible transition scenarios where this can
+   be enforced.
+   </t>
+
+   </section> <!--"Transient State while migrating"-->
+
+   <section anchor='sic'><name>Single Instance Scenario</name>
+   <t>
+   In a single instance scenario, nodes that support RFC 8138 are configured
+   with a new OCP, that may use the same OF operation or a variation of it. when
+   it finally sets the "T" flag, the root also migrates to the new OCP. As a
+   result, nodes that do not support RFC 8138 join as leaves and do not forward
+   packets anymore. The leaves generate packets without compression. The parents
+   - which supports RFC 8138 - may encapsulate the packets using RFC 8138 if
+   needed. The other way around, the root encapsulates packets to the leaves all
+   the way to the parent, which decapsulates and distribute the uncompresses
+   inner packet to the leaf.
+   </t>
+
+   <t>
+   This scenario presents a number of caveats:
+   </t><ul spacing='normal'>
+   <li>
+   The method consumes an extra OCP. It also requires a means to signal the
+   capabilities of the leaf, e.g., using <xref target='I-D.ietf-roll-mopex-cap'>
+   "RPL Mode of Operation extension"</xref>.
+   </li>
+   <li>
+   If an implementation does not move to a leaf mode when the OCP is changed to
+   an unknown one, then the node may be stalled.
+   </li>
+   <li>
+   If the only possible parents of a node are nodes that do not support RFC 8138,
+   then that node will loose all its parent at the time of the migration and it
+   will be stalled until a parent is deployed with the new capability.
+   </li>
+   <li>
+   Nodes that only support RFC8138 for forwarding may not parse the RPI in
+   native form. If such nodes are present, the parent needs to encapsulate with
+   RFC8138.
+   </li>
+   </ul><t>
+   </t>
+
+   </section> <!--"Single Instance Scenario"-->
+
+   <section anchor='dic'><name>Double Instance Scenario</name>
+   <t>An alternate to the Single Instance Scenario is to deploy an additional
+   Instance for the nodes that support <xref target='RFC8138'/>.
+   The two instances operate as ships-in-the-night as specified in
+   <xref target='RFC6550'/>.  The preexisting Instance that does not use
+   <xref target='RFC8138'/>, whereas the new Instance does. This is signaled
+   by the "T" flag which is only set in the configuration option in DIO messages
+   in the new Instance.
+   </t>
+
+   <t>
+   Nodes that support RFC 8138 participate to both Instances but favor the new
+   Instance for the traffic that they source.
+   On the other hand, nodes that only support the uncompressed format would
+   either not be configured for the new instance, or would be configured to join
+   it as leaves only.
+   </t>
+
+   <t>
+   This method eliminates the risks of nodes being stalled that are described in
+   <xref target='sic'/> but requires implementations to support at least two RPL
+   Instances and demands management capabilities to introduce new Instances and
+   deprecate old ones.
+   </t>
+   </section> <!-- Double Instance Scenario -->
+
+
+   <section anchor='rb'><name>Rolling Back</name>
+
+  <t>
+   After downgrading a network to turn the <xref target='RFC8138'/> compression
+   off, the administrator SHOULD make sure that all nodes have converged to the
+   "T" flag reset before allowing nodes that do not support the compression in
+   the network (see caveats in <xref target='sic'/>).
+  </t>
+
+   <t>
+   It is RECOMMENDED to only deploy nodes that support <xref target='RFC8138'/>
+   in a network where the compression is turned on. A node that does not support
+   <xref target='RFC8138'/> MUST only be used as a leaf.
+   </t>
+
+   </section> <!-- Rolling Back -->
+
+   </section> <!-- Transition Scenarios -->
+
+   <section anchor="iana"><name>IANA Considerations</name>
+    <t>
+    This specification updates the Registry for the "DODAG Configuration Option
+    Flags" that was created for <xref target='RFC6550'/> as follows:
+    </t>
+
+   <table  anchor="nexndopt"><name>New DODAG Configuration Option Flag</name>
+   <thead>
+      <tr><td>Bit Number</td><td>Capability Description</td><td>Reference</td></tr>
+   </thead><tbody>
+      <tr><td>2</td><td>Turn on RFC8138 Compression (T)</td><td>THIS RFC</td></tr>
+   </tbody>
+   </table>
+
+   </section>
+
+   <section anchor='sec'><name>Security Considerations</name>
+    <t>
+    Turning the "T" flag on before some routers are upgraded may cause a loss
+    of packets. The new bit is protected as the rest of the configuration so
+    this is just one of the many attacks that can happen if an attacker manages
+    to inject a corrupted configuration.
+    </t><t>
+    Turning the "T" flag on and off may create inconsistencies in the network
+    but as long as all nodes are upgraded to RFC 8138 support they will be able
+    to forward both forms. The draft insists that the source is responsible
+    for selecting whether the packet is compressed or not, and all routers must
+    use the format that the source selected. So the result of an inconsistency
+    is merely that both forms will be present in the network, at an additional
+    cost of bandwidth for packets in the uncompressed form.
+    </t>
+   </section>
+
+   <section><name>Acknowledgments</name>
+   <t>
+   </t>
+   </section><!-- ack -->
+</middle>
+
+<back>
+
+   <displayreference   target="I-D.ietf-roll-mopex-cap"        to="MOP-EXT"/>
+   <references><name>Normative References</name>
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/> <!-- RPL -->
+   </references>
+   <references><name>Informative References</name>
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
+      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-mopex-cap.xml'/>
+   </references>
+</back>
+
+</rfc>
