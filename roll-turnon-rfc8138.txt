@@ -10,7 +10,7 @@ Expires: 25 July 2020
 
 
                    Configuration option for RFC 8138
-                   draft-ietf-roll-turnon-rfc8138-02
+                   draft-ietf-roll-turnon-rfc8138-04
 
 Abstract
 
@@ -66,14 +66,14 @@ Table of Contents
    4.  Updating RFC 8138 . . . . . . . . . . . . . . . . . . . . . .   3
    5.  Transition Scenarios  . . . . . . . . . . . . . . . . . . . .   3
      5.1.  Inconsistent State While Migrating  . . . . . . . . . . .   5
-     5.2.  Single Instance Scenario  . . . . . . . . . . . . . . . .   5
+     5.2.  Single RPL Instance Scenario  . . . . . . . . . . . . . .   5
      5.3.  Double RPL Instances Scenario . . . . . . . . . . . . . .   6
      5.4.  Rolling Back  . . . . . . . . . . . . . . . . . . . . . .   6
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   7
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .   7
-   10. Informative References  . . . . . . . . . . . . . . . . . . .   7
+   10. Informative References  . . . . . . . . . . . . . . . . . . .   8
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
 
 1.  Introduction
@@ -248,9 +248,9 @@ Internet-Draft              Enabling RFC 8138               January 2020
    specification.  Section 5.2 and Section 5.3 provide possible
    transition scenarios where this can be enforced.
 
-5.2.  Single Instance Scenario
+5.2.  Single RPL Instance Scenario
 
-   In a Single Instance Scenario, nodes that support RFC 8138 are
+   In a Single RPL Instance Scenario, nodes that support RFC 8138 are
    configured with a new OCP, that may use the same OF operation or a
    variation of it.  The root sets the "T" flag at the time it migrates
    to the new OCP.  As a result, nodes that do not support RFC 8138 join
@@ -289,23 +289,24 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 5.3.  Double RPL Instances Scenario
 
-   An alternate to the Single Instance Scenario is to deploy an
-   additional Instance for the nodes that support [RFC8138].  The two
-   RPL Instances operate independently as specified in [RFC6550].  The
-   preexisting Instance that does not use [RFC8138], whereas the new
-   Instance does.  This is signaled by the "T" flag which is only set in
-   the configuration option in DIO messages in the new Instance.
+   An alternate to the Single RPL Instance Scenario is to deploy an
+   additional RPL Instance for the nodes that support [RFC8138].  The
+   two RPL Instances operate independently as specified in [RFC6550].
+   The preexisting RPL Instance that does not use [RFC8138], whereas the
+   new RPL Instance does.  This is signaled by the "T" flag which is
+   only set in the configuration option in DIO messages in the new RPL
+   Instance.
 
    Nodes that support RFC 8138 participate to both Instances but favor
-   the new Instance for the traffic that they source.  On the other
+   the new RPL Instance for the traffic that they source.  On the other
    hand, nodes that only support the uncompressed format would either
-   not be configured for the new Instance, or would be configured to
+   not be configured for the new RPL Instance, or would be configured to
    join it as leaves only.
 
    This method eliminates the risks of nodes being stalled that are
    described in Section 5.2 but requires implementations to support at
    least two RPL Instances and demands management capabilities to
-   introduce new Instances and deprecate old ones.
+   introduce new RPL Instances and deprecate old ones.
 
 5.4.  Rolling Back
 
@@ -323,13 +324,12 @@ Internet-Draft              Enabling RFC 8138               January 2020
    This specification updates the Registry for the "DODAG Configuration
    Option Flags" that was created for [RFC6550] as follows:
 
-       +------------+---------------------------------+-----------+
-       | Bit Number | Capability Description          | Reference |
-       +============+=================================+===========+
-       | 2          | Turn on RFC8138 Compression (T) | THIS RFC  |
-       +------------+---------------------------------+-----------+
 
-               Table 1: New DODAG Configuration Option Flag
+
+
+
+
+
 
 
 
@@ -338,14 +338,22 @@ Thubert & Zhao            Expires 25 July 2020                  [Page 6]
 Internet-Draft              Enabling RFC 8138               January 2020
 
 
+       +------------+---------------------------------+-----------+
+       | Bit Number | Capability Description          | Reference |
+       +============+=================================+===========+
+       | 2          | Turn on RFC8138 Compression (T) | THIS RFC  |
+       +------------+---------------------------------+-----------+
+
+               Table 1: New DODAG Configuration Option Flag
+
 7.  Security Considerations
 
-   Turning the "T" flag on before some routers are upgraded may cause a
+   Setting the "T" flag before some routers are upgraded may cause a
    loss of packets.  The new bit is protected as the rest of the
    configuration so this is just one of the many attacks that can happen
    if an attacker manages to inject a corrupted configuration.
 
-   Turning the "T" flag on and off may create inconsistencies in the
+   Setting and resetting the "T" flag may create inconsistencies in the
    network but as long as all nodes are upgraded to RFC 8138 support
    they will be able to forward both forms.  The draft insists that the
    source is responsible for selecting whether the packet is compressed
@@ -356,6 +364,8 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 8.  Acknowledgments
 
+   The authors wish to thank Rahul Jadhav for his in-depth review and
+   constructive suggestions.
 
 9.  Normative References
 
@@ -375,6 +385,15 @@ Internet-Draft              Enabling RFC 8138               January 2020
               DOI 10.17487/RFC6550, March 2012,
               <https://www.rfc-editor.org/info/rfc6550>.
 
+
+
+
+
+Thubert & Zhao            Expires 25 July 2020                  [Page 7]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
+
    [USEofRPLinfo]
               Robles, I., Richardson, M., and P. Thubert, "Using RPI
               Option Type, Routing Header for Source Routes and IPv6-in-
@@ -384,15 +403,6 @@ Internet-Draft              Enabling RFC 8138               January 2020
               roll-useofrplinfo-34>.
 
 10.  Informative References
-
-
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 7]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
 
    [RFC8138]  Thubert, P., Ed., Bormann, C., Toutain, L., and R. Cragie,
               "IPv6 over Low-Power Wireless Personal Area Network
@@ -427,16 +437,6 @@ Authors' Addresses
    China
 
    Email: liz3@cisco.com
-
-
-
-
-
-
-
-
-
-
 
 
 

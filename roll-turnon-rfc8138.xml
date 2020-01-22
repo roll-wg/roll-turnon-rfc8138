@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-02">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-04">
 <front>
 
    <title abbrev='Enabling RFC 8138'>Configuration option for RFC 8138</title>
@@ -244,9 +244,9 @@
 
    </section> <!--"Transient State while migrating"-->
 
-   <section anchor='sic'><name>Single Instance Scenario</name>
+   <section anchor='sic'><name>Single RPL Instance Scenario</name>
    <t>
-   In a Single Instance Scenario, nodes that support RFC 8138 are configured
+   In a Single RPL Instance Scenario, nodes that support RFC 8138 are configured
    with a new OCP, that may use the same OF operation or a variation of it. The
    root sets the "T" flag at the time it migrates to the new OCP. As a result,
    nodes that do not support RFC 8138 join as leaves and do not forward packets
@@ -285,28 +285,28 @@
    </section> <!--"Single Instance Scenario"-->
 
    <section anchor='dic'><name>Double RPL Instances Scenario</name>
-   <t>An alternate to the Single Instance Scenario is to deploy an additional
-   Instance for the nodes that support <xref target='RFC8138'/>.
+   <t>An alternate to the Single RPL Instance Scenario is to deploy an additional
+   RPL Instance for the nodes that support <xref target='RFC8138'/>.
    The two RPL Instances operate independently as specified
-   in <xref target='RFC6550'/>.  The preexisting Instance that does not use
-   <xref target='RFC8138'/>, whereas the new Instance does. This is signaled
+   in <xref target='RFC6550'/>.  The preexisting RPL Instance that does not use
+   <xref target='RFC8138'/>, whereas the new RPL Instance does. This is signaled
    by the "T" flag which is only set in the configuration option in DIO messages
-   in the new Instance.
+   in the new RPL Instance.
    </t>
 
    <t>
    Nodes that support RFC 8138 participate to both Instances but favor the new
-   Instance for the traffic that they source.
+   RPL Instance for the traffic that they source.
    On the other hand, nodes that only support the uncompressed format would
-   either not be configured for the new Instance, or would be configured to join
-   it as leaves only.
+   either not be configured for the new RPL Instance, or would be configured to
+   join it as leaves only.
    </t>
 
    <t>
    This method eliminates the risks of nodes being stalled that are described in
    <xref target='sic'/> but requires implementations to support at least two RPL
-   Instances and demands management capabilities to introduce new Instances and
-   deprecate old ones.
+   Instances and demands management capabilities to introduce new RPL Instances
+   and deprecate old ones.
    </t>
    </section> <!-- Double Instance Scenario -->
 
@@ -348,12 +348,12 @@
 
    <section anchor='sec'><name>Security Considerations</name>
     <t>
-    Turning the "T" flag on before some routers are upgraded may cause a loss
+    Setting the "T" flag before some routers are upgraded may cause a loss
     of packets. The new bit is protected as the rest of the configuration so
     this is just one of the many attacks that can happen if an attacker manages
     to inject a corrupted configuration.
     </t><t>
-    Turning the "T" flag on and off may create inconsistencies in the network
+    Setting and resetting the "T" flag may create inconsistencies in the network
     but as long as all nodes are upgraded to RFC 8138 support they will be able
     to forward both forms. The draft insists that the source is responsible
     for selecting whether the packet is compressed or not, and all routers must
@@ -364,7 +364,8 @@
    </section>
 
    <section><name>Acknowledgments</name>
-   <t>
+   <t>The authors wish to thank Rahul Jadhav for his in-depth review and
+   constructive suggestions.
    </t>
    </section><!-- ack -->
 </middle>
