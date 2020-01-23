@@ -5,8 +5,8 @@
 ROLL                                                     P. Thubert, Ed.
 Internet-Draft                                                   L. Zhao
 Updates: 6550, 8138 (if approved)                          Cisco Systems
-Intended status: Standards Track                         22 January 2020
-Expires: 25 July 2020
+Intended status: Standards Track                         23 January 2020
+Expires: 26 July 2020
 
 
                    Configuration option for RFC 8138
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 July 2020.
+   This Internet-Draft will expire on 26 July 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thubert & Zhao            Expires 25 July 2020                  [Page 1]
+Thubert & Zhao            Expires 26 July 2020                  [Page 1]
 
 Internet-Draft              Enabling RFC 8138               January 2020
 
@@ -62,14 +62,14 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  BCP 14  . . . . . . . . . . . . . . . . . . . . . . . . . . .   2
-   3.  Updating RFC 6550 . . . . . . . . . . . . . . . . . . . . . .   2
+   3.  Updating RFC 6550 . . . . . . . . . . . . . . . . . . . . . .   3
    4.  Updating RFC 8138 . . . . . . . . . . . . . . . . . . . . . .   3
-   5.  Transition Scenarios  . . . . . . . . . . . . . . . . . . . .   3
+   5.  Transition Scenarios  . . . . . . . . . . . . . . . . . . . .   4
      5.1.  Inconsistent State While Migrating  . . . . . . . . . . .   5
      5.2.  Single RPL Instance Scenario  . . . . . . . . . . . . . .   5
      5.3.  Double RPL Instances Scenario . . . . . . . . . . . . . .   6
      5.4.  Rolling Back  . . . . . . . . . . . . . . . . . . . . . .   6
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   7
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .   7
@@ -78,16 +78,26 @@ Table of Contents
 
 1.  Introduction
 
-   The transition to [RFC8138] in a network can only be done when all
-   nodes support the specification.  In a mixed case with both
-   RFC8138-capable and non-capable nodes, the compression should be
-   turned off.
+   The transition of a RPL [RFC6550] network to activate the compression
+   defined in [RFC8138] can only be done when all routers in the network
+   support it.  A non-capable node acting as a router would drop the
+   compressed packets and black-hole its subDAG.  In a mixed case with
+   both RFC8138-capable and non-capable nodes, the compression may be
+   turned on only if all the non-capable nodes act as leaves and their
+   RPL parents handle the compression/decompression on their behalf.
 
-   This document complements RFC 8138 and dedicates a bit in the RPL
+   This document complements RFC 8138 and dedicates a flag in the RPL
    configuration option to indicate whether RFC 8138 compression should
-   be used within the RPL Instance.  When the bit is not set, source
-   nodes that support RFC 8138 should refrain from using the compression
-   unless the information is superseded by configuration.
+   be used within the RPL Instance.  The setting of new flag is
+   controlled by the Root and propagates as is in the whole network.
+   When the bit is not set, source nodes that support RFC 8138 should
+   refrain from using the compression unless the information is
+   superseded by configuration.
+
+   This specification provides scenarios that force a legacy node to
+   become a RPL-Aware-Leaf (RAL).  In that case, the 6LR must be aware
+   by means out of scope that it must uncompress the packets before
+   delivering to the RAL.
 
 2.  BCP 14
 
@@ -96,6 +106,13 @@ Table of Contents
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119][RFC8174] when, and only when, they appear in all
    capitals, as shown here.
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 2]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
 3.  Updating RFC 6550
 
@@ -106,14 +123,6 @@ Table of Contents
    the use of the compression of RPL artifacts with RFC 8138.  The bit
    position of the "T" flag is indicated in Section 6.
 
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 2]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
    Section 6.3.1.  of [RFC6550] defines a 3-bit Mode of Operation (MOP)
    in the DIO Base Object.  The new "T" flag is defined only for MOP
    value between 0 to 6.  For a MOP value of 7 or above, the flag MAY
@@ -123,29 +132,43 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 4.  Updating RFC 8138
 
-   This document specifies controls that enable and disable the use of
-   the [RFC8138] compression in a RPL Instance.  Arguably, this could
-   have been done in [RFC8138] itself.
+   This document specifies a "T" flag in the RPL Configuration Option
+   that controls the use of the compression mechanism defined in
+   [RFC8138] within a RPL Instance.  If the Instance has multiple Roots
+   then they must be cordinated to use the same setting.
 
-   A node that supports this specification SHOULD source packets in the
-   compressed form using [RFC8138] if the new "T" flag is set in the RPL
-   configuration option from its parents.  Failure to do so will result
-   in larger packets, yields higher risks of loss and may cause a
-   fragmentation.
+   If the "T" flag is set, a node SHOULD source packets in the
+   compressed form using [RFC8138].  Failure to do so results in larger
+   packets, yields higher risks of loss and may cause a fragmentation.
+   If the node does not supports RFC 8138 then it SHOULD become a RUL
+   [UNAWARE-LEAVES].
 
-   A node that supports this specification SHOULD refrain from sourcing
+   A node that supports this specification MUST refrain from sourcing
    packets in the compressed form using [RFC8138] if the "T" flag is
    reset.  This behaviour can be overridden by a configuration of the
    node in order to cope with intermediate implementations of the root
    that support [RFC8138] but not this specification and cannot set the
    "T" flag.
 
-   The decision of using RFC 8138 to compress a packet is made at the
-   source depending on its capabilities and its knowledge of the state
-   of the "T" flag.  A router MUST forward the packet in the form that
-   the source used, either compressed or uncompressed.  A router that
-   encapsulates a packet is the source of the resulting packet and the
-   rules above apply to it in that case.
+   The decision of using RFC 8138 is made by the source of the packet
+   depending on its capabilities and its knowledge of the state of the
+   "T" flag.  A router that encapsulates a packet is the source of the
+   resulting packet and decides whether to compress the outer headers as
+   indicated above.  The Root that encapsulates a packet to an external
+   destination (e.g., a RUL) MUST uncompress the original packet before
+   the encapsulation.  An intermediate router MUST forward the packet in
+   the form that the source used, either compressed or uncompressed,
+   unless it is delivering to a RAL that is not known to support RFC
+   8138, in which case it MUST uncompress the packet before delivering.
+
+
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 3]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
 5.  Transition Scenarios
 
@@ -162,21 +185,14 @@ Internet-Draft              Enabling RFC 8138               January 2020
    A node that does not support [RFC8138] can interoperate with a node
    that supports this specification in a network with RFC 8138
    compression turned off.  But it cannot forward compressed packets and
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 3]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
    therefore it cannot act as a router in a network with RFC 8138
    compression turned on.  It may remain connected to that network as a
    leaf and generate uncompressed packets.  The leaf can receive packets
-   if they are delivered by the parent 6LR in the uncompressed form.
-   This requires a knowledge by the 6LR that the leaf does not support
-   RFC 8138.  A RPL-Unaware-Leaf (RUL) [USEofRPLinfo] is an external
-   target and by default is not expected to support RFC 8138.
+   if they are delivered by the parent 6LR in the uncompressed form.  If
+   the leaf is a RUL, the compressed headers are removed by the parent
+   6LR with the encapsulation as indicated in [USEofRPLinfo].  When
+   delivering to a RAL, the 6LR needs to know whether the RAL supports
+   RFC 8138, e.g., through configuration.
 
    [RFC6550] states that "Nodes other than the DODAG root MUST NOT
    modify this information when propagating the DODAG Configuration
@@ -202,6 +218,14 @@ Internet-Draft              Enabling RFC 8138               January 2020
    operate in a RPL Instance but does not support a value for a known
    parameter that is mandatory for routing MUST NOT operate as a router
    but MAY still join as a leaf.  Note that a legacy node will not
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 4]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
+
    recognize when a reserved field is now used and will not turn to a
    leaf when that happens.
 
@@ -211,20 +235,6 @@ Internet-Draft              Enabling RFC 8138               January 2020
    possible to roll back (see Section 5.4), adding nodes that do not
    support [RFC8138] after a roll back may be problematic if the roll
    back is not fully complete (see caveats in Section 5.2).
-
-
-
-
-
-
-
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 4]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
 
 5.1.  Inconsistent State While Migrating
 
@@ -263,6 +273,15 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
    This scenario presents a number of caveats:
 
+
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 5]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
+
    *  The method consumes an extra OCP.  It also requires a means to
       signal the capabilities of the leaf, e.g., using "RPL Mode of
       Operation extension" [MOP-EXT].
@@ -274,13 +293,6 @@ Internet-Draft              Enabling RFC 8138               January 2020
       support RFC 8138, then that node will loose all its parent at the
       time of the migration and it will be stalled until a parent is
       deployed with the new capability.
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 5]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
 
    *  Nodes that only support RFC8138 for forwarding may not parse the
       RPI in native form.  If such nodes are present, the parent needs
@@ -319,24 +331,17 @@ Internet-Draft              Enabling RFC 8138               January 2020
    network where the compression is turned on.  A node that does not
    support [RFC8138] MUST only be used as a leaf.
 
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 6]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
+
 6.  IANA Considerations
 
    This specification updates the Registry for the "DODAG Configuration
    Option Flags" that was created for [RFC6550] as follows:
-
-
-
-
-
-
-
-
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 6]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
 
        +------------+---------------------------------+-----------+
        | Bit Number | Capability Description          | Reference |
@@ -381,18 +386,17 @@ Internet-Draft              Enabling RFC 8138               January 2020
    [RFC6550]  Winter, T., Ed., Thubert, P., Ed., Brandt, A., Hui, J.,
               Kelsey, R., Levis, P., Pister, K., Struik, R., Vasseur,
               JP., and R. Alexander, "RPL: IPv6 Routing Protocol for
-              Low-Power and Lossy Networks", RFC 6550,
-              DOI 10.17487/RFC6550, March 2012,
-              <https://www.rfc-editor.org/info/rfc6550>.
 
 
 
-
-
-Thubert & Zhao            Expires 25 July 2020                  [Page 7]
+Thubert & Zhao            Expires 26 July 2020                  [Page 7]
 
 Internet-Draft              Enabling RFC 8138               January 2020
 
+
+              Low-Power and Lossy Networks", RFC 6550,
+              DOI 10.17487/RFC6550, March 2012,
+              <https://www.rfc-editor.org/info/rfc6550>.
 
    [USEofRPLinfo]
               Robles, I., Richardson, M., and P. Thubert, "Using RPI
@@ -401,6 +405,12 @@ Internet-Draft              Enabling RFC 8138               January 2020
               Progress, Internet-Draft, draft-ietf-roll-useofrplinfo-34,
               20 January 2020, <https://tools.ietf.org/html/draft-ietf-
               roll-useofrplinfo-34>.
+
+   [UNAWARE-LEAVES]
+              Thubert, P. and M. Richardson, "Routing for RPL Leaves",
+              Work in Progress, Internet-Draft, draft-ietf-roll-unaware-
+              leaves-08, 16 December 2019, <https://tools.ietf.org/html/
+              draft-ietf-roll-unaware-leaves-08>.
 
 10.  Informative References
 
@@ -432,6 +442,14 @@ Authors' Addresses
    Cisco Systems, Inc
    Xinsi Building
    No. 926 Yi Shan Rd
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 8]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
+
    SHANGHAI
    200233
    China
@@ -445,4 +463,42 @@ Authors' Addresses
 
 
 
-Thubert & Zhao            Expires 25 July 2020                  [Page 8]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert & Zhao            Expires 26 July 2020                  [Page 9]
