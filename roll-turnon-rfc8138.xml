@@ -105,13 +105,18 @@
 
    <section><name>Updating RFC 6550</name>
    <t>
-   RPL defines a configuration option that is registered to
-   IANA in section 20.14. of <xref target='RFC6550'/>. This specification
-   defines a new flag "Enable RFC8138 Compression" (T) that is encoded in
-   one of the reserved control bits in the option. The new flag is set to turn
-   on the use of the compression of RPL artifacts with RFC 8138. The bit
+   This specification defines a new flag "Enable RFC8138 Compression" (T).
+   The "T" flag is set to turn on the use of the compression of RPL artifacts
+   with <xref target='RFC8138'/> within a RPL Instance. If a RPL Instance has
+   multiple Roots then they must be coordinated to use the same setting.
+   </t>
+   <t>
+   RPL defines a Configuration Option that is registered to  IANA in section
+   20.14. of <xref target='RFC6550'/>. The "T" flag is encoded in one of the
+   reserved control bits in the RPL Configuration Option. The bit
    position of the "T" flag is indicated in <xref target='iana'/>.
    </t>
+
    <t>
    Section 6.3.1.
    of <xref target='RFC6550'/> defines a 3-bit Mode of Operation (MOP) in the
@@ -125,12 +130,7 @@
 
    <section><name>Updating RFC 8138</name>
 
-   <t>
-   This document specifies a "T" flag in the RPL Configuration Option that
-   controls the use of the compression mechanism defined in
-   <xref target='RFC8138'/> within a RPL Instance. If the Instance has multiple
-   Roots then they must be cordinated to use the same setting.
-   </t>
+
 
    <t>
    If the "T" flag is set, a node SHOULD source packets in the compressed form

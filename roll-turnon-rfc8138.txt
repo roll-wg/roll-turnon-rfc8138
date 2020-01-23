@@ -116,11 +116,15 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 3.  Updating RFC 6550
 
-   RPL defines a configuration option that is registered to IANA in
-   section 20.14. of [RFC6550].  This specification defines a new flag
-   "Enable RFC8138 Compression" (T) that is encoded in one of the
-   reserved control bits in the option.  The new flag is set to turn on
-   the use of the compression of RPL artifacts with RFC 8138.  The bit
+   This specification defines a new flag "Enable RFC8138 Compression"
+   (T).  The "T" flag is set to turn on the use of the compression of
+   RPL artifacts with [RFC8138] within a RPL Instance.  If a RPL
+   Instance has multiple Roots then they must be coordinated to use the
+   same setting.
+
+   RPL defines a Configuration Option that is registered to IANA in
+   section 20.14. of [RFC6550].  The "T" flag is encoded in one of the
+   reserved control bits in the RPL Configuration Option.  The bit
    position of the "T" flag is indicated in Section 6.
 
    Section 6.3.1.  of [RFC6550] defines a 3-bit Mode of Operation (MOP)
@@ -131,11 +135,6 @@ Internet-Draft              Enabling RFC 8138               January 2020
    do so.
 
 4.  Updating RFC 8138
-
-   This document specifies a "T" flag in the RPL Configuration Option
-   that controls the use of the compression mechanism defined in
-   [RFC8138] within a RPL Instance.  If the Instance has multiple Roots
-   then they must be cordinated to use the same setting.
 
    If the "T" flag is set, a node SHOULD source packets in the
    compressed form using [RFC8138].  Failure to do so results in larger
@@ -160,6 +159,7 @@ Internet-Draft              Enabling RFC 8138               January 2020
    the form that the source used, either compressed or uncompressed,
    unless it is delivering to a RAL that is not known to support RFC
    8138, in which case it MUST uncompress the packet before delivering.
+
 
 
 
