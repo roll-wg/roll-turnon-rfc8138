@@ -5,8 +5,8 @@
 ROLL                                                     P. Thubert, Ed.
 Internet-Draft                                                   L. Zhao
 Updates: 6550, 8138 (if approved)                          Cisco Systems
-Intended status: Standards Track                         23 January 2020
-Expires: 26 July 2020
+Intended status: Standards Track                         24 January 2020
+Expires: 27 July 2020
 
 
                    Configuration option for RFC 8138
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 July 2020.
+   This Internet-Draft will expire on 27 July 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thubert & Zhao            Expires 26 July 2020                  [Page 1]
+Thubert & Zhao            Expires 27 July 2020                  [Page 1]
 
 Internet-Draft              Enabling RFC 8138               January 2020
 
@@ -69,7 +69,7 @@ Table of Contents
      5.2.  Single RPL Instance Scenario  . . . . . . . . . . . . . .   5
      5.3.  Double RPL Instances Scenario . . . . . . . . . . . . . .   6
      5.4.  Rolling Back  . . . . . . . . . . . . . . . . . . . . . .   6
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   7
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .   7
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thubert & Zhao            Expires 26 July 2020                  [Page 2]
+Thubert & Zhao            Expires 27 July 2020                  [Page 2]
 
 Internet-Draft              Enabling RFC 8138               January 2020
 
@@ -136,36 +136,36 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 4.  Updating RFC 8138
 
-   If the "T" flag is set, a node SHOULD source packets in the
-   compressed form using [RFC8138].  Failure to do so results in larger
-   packets, yields higher risks of loss and may cause a fragmentation.
-   If the node does not supports RFC 8138 then it SHOULD become a RUL
-   [UNAWARE-LEAVES].
+   A node that supports this specification MUST source packets in the
+   compressed form using [RFC8138] if and only if the "T" flag is set.
+   This behaviour can be overridden by a configuration of the node in
+   order to cope with intermediate implementations of the root that
+   support [RFC8138] but not this specification and cannot set the "T"
+   flag.
 
-   A node that supports this specification MUST refrain from sourcing
-   packets in the compressed form using [RFC8138] if the "T" flag is
-   reset.  This behaviour can be overridden by a configuration of the
-   node in order to cope with intermediate implementations of the root
-   that support [RFC8138] but not this specification and cannot set the
-   "T" flag.
+   The decision of using [RFC8138] is made by the originator of the
+   packet depending on its capabilities and its knowledge of the state
+   of the "T" flag.  A router that encapsulates a packet is the
+   originator of the resulting packet and decides whether to compress
+   the outer headers as indicated above.  An external target
+   [USEofRPLinfo] is not expected to support [RFC8138].  An intermediate
+   router MUST forward the packet in the form that the source used,
+   either compressed or uncompressed, unless it is either forwarding to
+   an external target or delivering to a leaf that is not known to
+   support RFC 8138, in which cases it MUST uncompress the packet.
 
-   The decision of using RFC 8138 is made by the source of the packet
-   depending on its capabilities and its knowledge of the state of the
-   "T" flag.  A router that encapsulates a packet is the source of the
-   resulting packet and decides whether to compress the outer headers as
-   indicated above.  The Root that encapsulates a packet to an external
-   destination (e.g., a RUL) MUST uncompress the original packet before
-   the encapsulation.  An intermediate router MUST forward the packet in
-   the form that the source used, either compressed or uncompressed,
-   unless it is delivering to a RAL that is not known to support RFC
-   8138, in which case it MUST uncompress the packet before delivering.
-
-
-
-
+   A RPL-Unaware Leaf (RUL) [UNAWARE-LEAVES] is both a leaf and an
+   external target.  A RUL does not participate to RPL and depends on
+   the 6LR to ensure its connectivity.  Packets from/to a RUL are
+   tunneled back and forth to the Root regardless of the MOP used in the
+   RPL Instance.  A node that supports this specification but does not
+   support [RFC8138] SHOULD join as a RUL to ensure that the 6LR is
+   aware it needs to uncompress the packets before delivering.
 
 
-Thubert & Zhao            Expires 26 July 2020                  [Page 3]
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 3]
 
 Internet-Draft              Enabling RFC 8138               January 2020
 
@@ -182,52 +182,35 @@ Internet-Draft              Enabling RFC 8138               January 2020
    accordingly and in a network in transition from off to on or on to
    off (see Section 5.1).
 
-   A node that does not support [RFC8138] can interoperate with a node
-   that supports this specification in a network with RFC 8138
-   compression turned off.  But it cannot forward compressed packets and
-   therefore it cannot act as a router in a network with RFC 8138
-   compression turned on.  It may remain connected to that network as a
-   leaf and generate uncompressed packets.  The leaf can receive packets
-   if they are delivered by the parent 6LR in the uncompressed form.  If
-   the leaf is a RUL, the compressed headers are removed by the parent
-   6LR with the encapsulation as indicated in [USEofRPLinfo].  When
-   delivering to a RAL, the 6LR needs to know whether the RAL supports
-   RFC 8138, e.g., through configuration.
+   A node that does not support [RFC8138] can interoperate with nodes
+   that do in a network with RFC 8138 compression turned off.  If the
+   compression is turned on, the node cannot forward compressed packets
+   and therefore it cannot act as a router.  It may remain connected to
+   that network as a leaf, in which case it generates uncompressed
+   packets and can receive packets if they are delivered by the parent
+   6LR in the uncompressed form.
 
    [RFC6550] states that "Nodes other than the DODAG root MUST NOT
    modify this information when propagating the DODAG Configuration
-   option".  In other words, the configuration option is a way for the
-   root to configure the LLN nodes but it cannot be used by a parent to
-   advertise its capabilities down the DODAG.  A parent propagates the
-   "T" flag as set whether it supports RFC 8138 or not.  The setting of
-   the "T" flag can thus not be used as an indication of the support by
-   the sender, and a child cannot favor a parent based on it.
+   option".  Therefore, even a legacy parent propagates the "T" flag as
+   set by the Root whether it supports this specification or not.  So
+   when the "T" flag is set, it is transparently flooded to all the
+   nodes in the RPL Instance.
 
    Sections 8.5 and 9.2 of [RFC6550] also suggests that a RPL-aware node
-   may attach to a DODAG as a leaf node only, e.g., when a node does not
+   may only attach to a DODAG as a leaf node when the node does not
    support the Mode of Operation of a RPL Instance, the Objective
    Function (OF) as indicated by the Objective Code Point (OCP) or some
-   other parameters in the configuration option.  [USEofRPLinfo]
-   indicates that the node may also join as a RUL, in which case it
-   refrains from participating to RPL and depends on the 6LR to ensure
-   connectivity regardless of the way the RPL network is operated.
+   other parameters in the configuration option.
 
-   This means that changing the OCP in a DODAG can be used to force
-   nodes that do not support a particular feature to join as leaf only.
-   This specification reiterates that a node that is configured to
-   operate in a RPL Instance but does not support a value for a known
-   parameter that is mandatory for routing MUST NOT operate as a router
-   but MAY still join as a leaf.  Note that a legacy node will not
-
-
-
-Thubert & Zhao            Expires 26 July 2020                  [Page 4]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
-   recognize when a reserved field is now used and will not turn to a
-   leaf when that happens.
+   Per the above, changing the OCP in a DODAG can be used to force nodes
+   that do not support a particular feature to join as leaf only.  This
+   specification reiterates that a node that is configured to operate in
+   a RPL Instance but does not support a value for a known parameter
+   that is mandatory for routing MUST NOT operate as a router but MAY
+   still join as a leaf.  Note that a legacy node will not recognize
+   when a reserved field is now used and will not turn to a leaf when
+   the "T" flag is set.
 
    The intent for this specification is to perform a migration once and
    for all without the need for a flag day.  In particular it is not the
@@ -235,6 +218,13 @@ Internet-Draft              Enabling RFC 8138               January 2020
    possible to roll back (see Section 5.4), adding nodes that do not
    support [RFC8138] after a roll back may be problematic if the roll
    back is not fully complete (see caveats in Section 5.2).
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 4]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
 5.1.  Inconsistent State While Migrating
 
@@ -273,15 +263,6 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
    This scenario presents a number of caveats:
 
-
-
-
-
-Thubert & Zhao            Expires 26 July 2020                  [Page 5]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
    *  The method consumes an extra OCP.  It also requires a means to
       signal the capabilities of the leaf, e.g., using "RPL Mode of
       Operation extension" [MOP-EXT].
@@ -293,6 +274,13 @@ Internet-Draft              Enabling RFC 8138               January 2020
       support RFC 8138, then that node will loose all its parent at the
       time of the migration and it will be stalled until a parent is
       deployed with the new capability.
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 5]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
    *  Nodes that only support RFC8138 for forwarding may not parse the
       RPI in native form.  If such nodes are present, the parent needs
@@ -331,17 +319,24 @@ Internet-Draft              Enabling RFC 8138               January 2020
    network where the compression is turned on.  A node that does not
    support [RFC8138] MUST only be used as a leaf.
 
-
-
-Thubert & Zhao            Expires 26 July 2020                  [Page 6]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
 6.  IANA Considerations
 
    This specification updates the Registry for the "DODAG Configuration
    Option Flags" that was created for [RFC6550] as follows:
+
+
+
+
+
+
+
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 6]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
        +------------+---------------------------------+-----------+
        | Bit Number | Capability Description          | Reference |
@@ -386,17 +381,18 @@ Internet-Draft              Enabling RFC 8138               January 2020
    [RFC6550]  Winter, T., Ed., Thubert, P., Ed., Brandt, A., Hui, J.,
               Kelsey, R., Levis, P., Pister, K., Struik, R., Vasseur,
               JP., and R. Alexander, "RPL: IPv6 Routing Protocol for
-
-
-
-Thubert & Zhao            Expires 26 July 2020                  [Page 7]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
               Low-Power and Lossy Networks", RFC 6550,
               DOI 10.17487/RFC6550, March 2012,
               <https://www.rfc-editor.org/info/rfc6550>.
+
+
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 7]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
    [USEofRPLinfo]
               Robles, I., Richardson, M., and P. Thubert, "Using RPI
@@ -442,17 +438,17 @@ Authors' Addresses
    Cisco Systems, Inc
    Xinsi Building
    No. 926 Yi Shan Rd
-
-
-
-Thubert & Zhao            Expires 26 July 2020                  [Page 8]
-
-Internet-Draft              Enabling RFC 8138               January 2020
-
-
    SHANGHAI
    200233
    China
+
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 8]
+
+Internet-Draft              Enabling RFC 8138               January 2020
+
 
    Email: liz3@cisco.com
 
@@ -501,4 +497,8 @@ Internet-Draft              Enabling RFC 8138               January 2020
 
 
 
-Thubert & Zhao            Expires 26 July 2020                  [Page 9]
+
+
+
+
+Thubert & Zhao            Expires 27 July 2020                  [Page 9]
