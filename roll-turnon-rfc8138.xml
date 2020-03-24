@@ -67,24 +67,24 @@
       <t>
       The transition of a RPL <xref target='RFC6550'/> network to activate the
       compression defined in <xref target='RFC8138'/> can only be done when all
-      routers in the network support it.  A non-capable node acting as a router
+      routers in the network support it.  Otherwise, a non-capable node acting as a router
       would drop the compressed packets and black-hole its subDAG. In a mixed
       case with both RFC8138-capable and non-capable nodes, the compression
       may be turned on only if all the non-capable nodes act as leaves and
       their RPL parents handle the compression/decompression on their behalf.
       </t>
       <t>
-      This document complements RFC 8138 and dedicates a flag in the RPL
-      configuration option to indicate whether RFC 8138 compression should be
-      used within the RPL Instance. The setting of new flag is controlled by the
+      This document complements <xref target='RFC8138'/> and dedicates a flag in the RPL
+      configuration option to indicate whether <xref target='RFC8138'/> compression should be
+      used within the RPL Instance. The setting of this new flag is controlled by the
       Root and propagates as is in the whole network. When the bit is not set,
-      source nodes that support RFC 8138 should refrain from using the
+      source nodes that support <xref target='RFC8138'/> should refrain from using the
       compression unless the information is superseded by configuration.
       </t>
       <t>
-      This specification provides scenarios that force a legacy node to become a
-      RPL-Aware-Leaf (RAL). In that case, the 6LR must be aware by means out of
-      scope that it must uncompress the packets before delivering to the RAL.
+      This specification provides scenarios that force a legacy RPL node to become a
+      RPL-Aware-Leaf (RAL). When this happens, its parent 6LR must be aware, by means out of
+      scope for this document, that it must uncompress the packets before delivering them to the RAL.
       </t>
 
    </section><!-- title="Introduction"-->
@@ -160,14 +160,14 @@
    An external target <xref target='I-D.ietf-roll-useofrplinfo'/> is not
    expected to support <xref target='RFC8138'/>.
    An intermediate router MUST forward the packet in the form that the source
-   used, either compressed or uncompressed, unless it is either forwarding to an
-   external target or delivering to a leaf that is not known to support RFC 8138,
+   used, either compressed or uncompressed, unless it is forwarding to an
+   external target or delivering to a leaf that is not known to support <xref target='RFC8138'/>,
    in which cases it MUST uncompress the packet.
    </t>
 
    <t>
    A RPL-Unaware Leaf (RUL) <xref target='I-D.ietf-roll-unaware-leaves'/> is
-   both a leaf and an external target. A RUL does not participate to RPL and
+   both a leaf and an external target. A RUL does not participate in RPL and
    depends on the 6LR to ensure its connectivity. Packets from/to a RUL are
    tunneled back and forth to the Root regardless of the MOP used in the RPL
    Instance.  A node that supports this specification but does not support
@@ -184,18 +184,18 @@
     A node that supports <xref target='RFC8138'/> but not this specification
     can only be used in a homogeneous network and an upgrade requires a
     "flag day" where all nodes are updated and then the network is rebooted
-    with implicitly RFC 8138 compression turned on with the "T" flag set on.
+    with implicitly <xref target='RFC8138'/> compression turned on with the "T" flag set on.
    </t>
 
    <t>
-    A node that supports this specification can work in a network with RFC 8138
+    A node that supports this specification can work in a network with <xref target='RFC8138'/>
     compression turned on or off with the "T" flag set accordingly and in a
     network in transition from off to on or on to off (see <xref target='mig'/>).
    </t>
 
    <t>
     A node that does not support <xref target='RFC8138'/> can interoperate with
-    nodes that do in a network with RFC 8138 compression turned off. If the
+    nodes that do in a network with <xref target='RFC8138'/> compression turned off. If the
     compression is turned on, the node cannot forward compressed packets and
     therefore it cannot act as a router. It may remain connected to that network
     as a leaf, in which case it generates uncompressed packets and can receive
@@ -245,9 +245,9 @@
    information slowly percolates through the DODAG as the DIO gets propagated.
    Some nodes will see the flag and start sourcing packets in the compressed
    form while other nodes in the same RPL Instance are still not aware of it.
-   Conversely, in non-storing mode, the root will start using RFC 8138 with a
+   Conversely, in non-storing mode, the root will start using <xref target='RFC8138'/> with a
    SRH-6LoRH that routes all the way to the last router or possibly to the leaf,
-   if the leaf supports RFC 8138.
+   if the leaf supports <xref target='RFC8138'/>.
    </t>
 
    <t>
@@ -269,14 +269,14 @@
 
    <section anchor='sic'><name>Single RPL Instance Scenario</name>
    <t>
-   In a Single RPL Instance Scenario, nodes that support RFC 8138 are configured
+   In a Single RPL Instance Scenario, nodes that support <xref target='RFC8138'/> are configured
    with a new OCP, that may use the same OF operation or a variation of it. The
    root sets the "T" flag at the time it migrates to the new OCP. As a result,
-   nodes that do not support RFC 8138 join as leaves and do not forward packets
+   nodes that do not support <xref target='RFC8138'/> join as leaves and do not forward packets
    anymore. The leaves generate packets without compression. The parents
-   - which supports RFC 8138 - may encapsulate the packets using RFC 8138 if
+   - which support <xref target='RFC8138'/> - may encapsulate the packets using <xref target='RFC8138'/> if
    needed. The other way around, the root encapsulates packets to the leaves all
-   the way to the parent, which decapsulates and distribute the uncompressed
+   the way to the parent, which decapsulate and distribute the uncompressed
    inner packet to the leaf.
    </t>
 
@@ -285,22 +285,22 @@
    </t><ul spacing='normal'>
    <li>
    The method consumes an extra OCP. It also requires a means to signal the
-   capabilities of the leaf, e.g., using <xref target='I-D.ietf-roll-mopex-cap'>
-   "RPL Mode of Operation extension"</xref>.
+   capabilities of the leaf, e.g., using <xref target='I-D.ietf-roll-capabilities'>
+   "RPL Capabilities"</xref>.
    </li>
    <li>
-   If an implementation does not move to a leaf mode when the OCP is changed to
+   If the RPL implementation of a node does not turn it to a leaf when the OCP is changed to
    an unknown one, then the node may be stalled.
    </li>
    <li>
-   If the only possible parents of a node are nodes that do not support RFC 8138,
+   If the only possible parents of a node are nodes that do not support <xref target='RFC8138'/>,
    then that node will loose all its parent at the time of the migration and it
    will be stalled until a parent is deployed with the new capability.
    </li>
    <li>
-   Nodes that only support RFC8138 for forwarding may not parse the RPI in
+   Nodes that only support <xref target='RFC8138'/> for forwarding may not parse the RPI in
    native form. If such nodes are present, the parent needs to encapsulate with
-   RFC8138.
+   <xref target='RFC8138'/>.
    </li>
    </ul><t>
    </t>
@@ -308,19 +308,19 @@
    </section> <!--"Single Instance Scenario"-->
 
    <section anchor='dic'><name>Double RPL Instances Scenario</name>
-   <t>An alternate to the Single RPL Instance Scenario is to deploy an additional
+   <t>An alternative to the Single RPL Instance Scenario is to deploy an additional
    RPL Instance for the nodes that support <xref target='RFC8138'/>.
    The two RPL Instances operate independently as specified
-   in <xref target='RFC6550'/>.  The preexisting RPL Instance that does not use
+   in <xref target='RFC6550'/>.  The preexisting RPL Instance does not use
    <xref target='RFC8138'/>, whereas the new RPL Instance does. This is signaled
    by the "T" flag which is only set in the configuration option in DIO messages
    in the new RPL Instance.
    </t>
 
    <t>
-   Nodes that support RFC 8138 participate to both Instances but favor the new
+   Nodes that support <xref target='RFC8138'/> participate in both Instances but favor the new
    RPL Instance for the traffic that they source.
-   On the other hand, nodes that only support the uncompressed format would
+   By contrast, nodes that only support the uncompressed format would
    either not be configured for the new RPL Instance, or would be configured to
    join it as leaves only.
    </t>
@@ -377,8 +377,8 @@
     to inject a corrupted configuration.
     </t><t>
     Setting and resetting the "T" flag may create inconsistencies in the network
-    but as long as all nodes are upgraded to RFC 8138 support they will be able
-    to forward both forms. The draft insists that the source is responsible
+    but as long as all nodes are upgraded to <xref target='RFC8138'/> support they will be able
+    to forward both forms. The source is responsible
     for selecting whether the packet is compressed or not, and all routers must
     use the format that the source selected. So the result of an inconsistency
     is merely that both forms will be present in the network, at an additional
@@ -397,7 +397,7 @@
 
    <displayreference   target="I-D.ietf-roll-useofrplinfo"     to="USEofRPLinfo"/>
    <displayreference   target="I-D.ietf-roll-unaware-leaves"     to="UNAWARE-LEAVES"/>
-   <displayreference   target="I-D.ietf-roll-mopex-cap"        to="MOP-EXT"/>
+   <displayreference   target="I-D.ietf-roll-capabilities"        to="CAPABILITIES"/>
    <references><name>Normative References</name>
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
@@ -407,7 +407,7 @@
    </references>
    <references><name>Informative References</name>
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
-      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-mopex-cap.xml'/>
+      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-capabilities.xml'/>
    </references>
 </back>
 
