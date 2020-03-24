@@ -70,8 +70,8 @@
       routers in the network support it.  Otherwise, a non-capable node acting as a router
       would drop the compressed packets and black-hole its subDAG. In a mixed
       case with both RFC8138-capable and non-capable nodes, the compression
-      may be turned on only if all the non-capable nodes act as leaves and
-      their RPL parents handle the compression/decompression on their behalf.
+      may be turned on only if all the non-capable nodes act as Hosts and
+      their RPL parents handle the compression/decompression for them.
       </t>
       <t>
       This document complements <xref target='RFC8138'/> and dedicates a flag in the RPL
@@ -82,13 +82,84 @@
       compression unless the information is superseded by configuration.
       </t>
       <t>
-      This specification provides scenarios that force a legacy RPL node to become a
-      RPL-Aware-Leaf (RAL). When this happens, its parent 6LR must be aware, by means out of
-      scope for this document, that it must uncompress the packets before delivering them to the RAL.
+      With RPL, a leaf is an IPv6 Host, which implies that leaves do not forward packets.
+      This specification provides scenarios that force a non-capable RPL-Aware Node
+      (RAN) to become a leaf.
+      The parent router must know, e.g., by configuration, or leveraging
+      <xref target='I-D.ietf-roll-capabilities'>"RPL Capabilities"</xref>,
+      when a leaf does not support the compression defined in
+      <xref target='RFC8138'/>. This is implicitly the case for a RPL-Unaware
+      Leaf (RUL) but is not known for a RPL-Aware Leaf (RAL). The parent router
+      must uncompress the packets before delivering them to a non-capable leaf
+      and it must compress the traffic from the leaf.
       </t>
 
    </section><!-- title="Introduction"-->
 
+
+<section><name>Terminology</name>
+
+<section anchor='lo'><name>References</name>
+<t>
+   The Terminology used in this document is consistent with and incorporates
+   that described in <xref target='RFC7102'>"Terms Used in Routing for Low-Power
+   and Lossy Networks (LLNs)"</xref>.
+   Other terms in use in LLNs are found in <xref target='RFC7228'>
+   "Terminology for Constrained-Node Networks"</xref>.
+</t>
+
+
+
+<t>"RPL", the "RPL Packet Information" (RPI), "RPL Instance" (indexed by a
+   RPLInstanceID) are defined in <xref target='RFC6550'>"RPL: IPv6 Routing
+   Protocol for Low-Power and Lossy Networks"</xref>. The RPI is the abstract
+   information that RPL defines to be placed in data packets, e.g., as the RPL
+   Option <xref target='RFC6553'/> within the IPv6 Hop-By-Hop Header.
+   By extension the term "RPI" is often used to refer to the RPL Option itself.
+   The DODAG Information Solicitation (DIS), Destination Advertisement Object
+   (DAO) and DODAG Information Object (DIO) messages are also specified in
+   <xref target='RFC6550'/>.
+</t><t>
+
+   This document uses the terms RPL-Unaware Leaf (RUL) and RPL Aware Leaf
+   (RAL) consistently with <xref target='I-D.ietf-roll-useofrplinfo'>
+   "Using RPI Option Type, Routing Header for Source Routes and IPv6-in-IPv6 encapsulation in the RPL Data Plane"</xref>.
+   The term RPL-Aware Node (RAN) refers to a node that is either
+   a RAL or a RPL Router. A RAN manages the reachability of its addresses and
+   prefixes by injecting them in RPL by itself. In contrast, a RUL leverages
+    <xref target='RFC8505'>"Registration Extensions for IPv6 over
+    Low-Power Wireless Personal Area Network (6LoWPAN) Neighbor Discovery"
+    </xref> to obtain reachability services from its parent router(s)
+    as specified in <xref target='I-D.ietf-roll-unaware-leaves'>
+    "Routing for RPL Leaves"</xref>.
+
+
+</t>
+
+
+</section>	<!-- end section "References" -->
+<section anchor='gloss'><name>Glossary</name>
+ <t> This document often uses the following acronyms:
+    </t>
+    <dl  spacing='compact'>
+    <dt>6LoWPAN:</dt><dd>IPv6 over Low-Power Wireless Personal Area Network</dd>
+    <dt>6LoRH:</dt><dd>6LoWPAN Routing Header</dd>
+    <dt>DIO:</dt><dd> DODAG Information Object (a RPL message) </dd>
+    <dt>DODAG:</dt><dd> Destination-Oriented Directed Acyclic Graph </dd>
+    <dt>LLN:</dt><dd> Low-Power and Lossy Network </dd>
+    <dt>RPL:</dt><dd> IPv6 Routing Protocol for Low-Power and Lossy Networks </dd>
+    <dt>OF:</dt><dd> RPL Objective Function</dd>
+    <dt>OCP:</dt><dd> RPL Objective Code Point</dd>
+    <dt>MOP:</dt><dd> RPL Mode of Operation </dd>
+    <dt>RPI:</dt><dd> RPL Packet Information </dd>
+    <dt>RAL:</dt><dd> RPL-Aware Leaf </dd>
+    <dt>RAN:</dt><dd> RPL-Aware Node  </dd>
+    <dt>RUL:</dt><dd> RPL-Unaware Leaf</dd>
+    <dt>SRH:</dt><dd>Source Routing Header</dd>
+
+
+    </dl>
+</section>	<!-- end section "Glossary" -->
 
 <section anchor='bcp'><name>BCP 14</name>
 <t>
@@ -96,11 +167,14 @@
     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
     "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
     "OPTIONAL" in this document are to be interpreted as described in BCP 14
-    <xref target='RFC2119'/><xref target='RFC8174'/> when, and only when, they
+ <xref target='RFC2119'/><xref target='RFC8174'/> when, and only when, they
     appear in all capitals, as shown here.
 
 </t>
 </section>	<!-- end section "BCP 14" -->
+
+
+</section>	<!-- end section "Terminology" -->
 
 
    <section><name>Updating RFC 6550</name>
@@ -131,22 +205,12 @@
    <section><name>Updating RFC 8138</name>
 
 
-  <!--
-   <t>
-   If the "T" flag is set, a node is supposed to source packets in the
-   compressed form using <xref target='RFC8138'/>. Failure to do so results
-   in larger packets, yields higher risks of loss and may cause a fragmentation.
-
-   If the node does not supports RFC 8138 then it RPL-Unaware Leaf
-   (RUL) and operates as specified in <xref target='I-D.ietf-roll-unaware-leaves'/>.
-   </t>
--->
 
    <t>
    A node that supports this specification MUST source packets in the compressed
    form using <xref target='RFC8138'/> if and only if the "T" flag
-   is set. This behaviour can be overridden by a configuration of the
-   node in order to cope with intermediate implementations of the root that
+   is set. This behaviour can be overridden by the configuration of the
+   node in order to cope with intermediate implementations of the Root that
    support <xref target='RFC8138'/> but not this specification and cannot set
    the "T" flag.
    </t>
@@ -161,19 +225,16 @@
    expected to support <xref target='RFC8138'/>.
    An intermediate router MUST forward the packet in the form that the source
    used, either compressed or uncompressed, unless it is forwarding to an
-   external target or delivering to a leaf that is not known to support <xref target='RFC8138'/>,
-   in which cases it MUST uncompress the packet.
+   external target or delivering to a leaf that is not known to support
+   <xref target='RFC8138'/>, in which cases it MUST uncompress the packet.
    </t>
 
-   <t>
-   A RPL-Unaware Leaf (RUL) <xref target='I-D.ietf-roll-unaware-leaves'/> is
-   both a leaf and an external target. A RUL does not participate in RPL and
-   depends on the 6LR to ensure its connectivity. Packets from/to a RUL are
-   tunneled back and forth to the Root regardless of the MOP used in the RPL
-   Instance.  A node that supports this specification but does not support
-   <xref target='RFC8138'/> SHOULD join as a RUL to ensure that the 6LR is aware
-   it needs to uncompress the packets before delivering.
-   </t>
+   <!--t>
+   A RUL <xref target='I-D.ietf-roll-unaware-leaves'/> is both a leaf and an
+   external target . A RUL does not participate in RPL and
+   depends on the parent router to obtain connectivity. Packets from/to a RUL are
+   tunneled back and forth between the parent and to the Root regardless of the MOP used in the RPL Instance.
+   </t-->
 
 
    </section><!-- Updating RFC 8138 -->
@@ -182,9 +243,10 @@
    <section><name>Transition Scenarios</name>
    <t>
     A node that supports <xref target='RFC8138'/> but not this specification
-    can only be used in a homogeneous network and an upgrade requires a
-    "flag day" where all nodes are updated and then the network is rebooted
-    with implicitly <xref target='RFC8138'/> compression turned on with the "T" flag set on.
+    can only be used in an homogeneous network. Enabling the
+    <xref target='RFC8138'/> compression requires a "flag day"; all nodes must
+    be upgraded, and then the network can be rebooted with the
+    <xref target='RFC8138'/> compression turned on.
    </t>
 
    <t>
@@ -198,34 +260,35 @@
     nodes that do in a network with <xref target='RFC8138'/> compression turned off. If the
     compression is turned on, the node cannot forward compressed packets and
     therefore it cannot act as a router. It may remain connected to that network
-    as a leaf, in which case it generates uncompressed packets and can receive
-    packets if they are delivered by the parent 6LR in the uncompressed form.
+    as a leaf, generates uncompressed packets, and can receive
+    packets if they are delivered by the parent router in the uncompressed form.
+    Unless this is known by other means, the node SHOULD join as a RUL as an
+    indication that its parent router needs to uncompress the packets before
+    delivering.
    </t>
 
    <t>
-   <xref target='RFC6550'/> states that "Nodes other than the DODAG root MUST
+   <xref target='RFC6550'/> states that "Nodes other than the DODAG Root MUST
    NOT modify this information when propagating the DODAG Configuration option".
    Therefore, even a legacy parent propagates the "T" flag as set by the Root
    whether it supports this specification or not. So when the "T" flag is set,
    it is transparently flooded to all the nodes in the RPL Instance.
    </t>
 
-   <t>Sections 8.5 and 9.2 of <xref target='RFC6550'/> also suggests that a
-   RPL-aware node may only attach to a DODAG as a leaf node when the node does
+   <t>
+   Sections 8.5 and 9.2 of <xref target='RFC6550'/> also suggests that a
+   RAN may only attach to a DODAG as a leaf when it does
    not support the Mode of Operation of a RPL Instance, the Objective Function
    (OF) as indicated by the Objective Code Point (OCP) or some other parameters
    in the configuration option.
    </t>
 
    <t>
-   Per the above, changing the
-   OCP in a DODAG can be used to force nodes that do not support a particular
-   feature to join as leaf only. This specification reiterates that a
-   node that is configured to operate in a RPL Instance but does not support a
-   value for a known parameter that is mandatory for routing MUST NOT operate
-   as a router but MAY still join as a leaf. Note that a legacy node will not
-   recognize when a reserved field is now used and will not turn to a leaf
-   when the "T" flag is set.
+   This specification reiterates that a RAN that is configured to operate in a
+   RPL Instance but does not support a value for a known parameter that is
+   mandatory for routing, such as the OCP, MUST NOT operate as a router but MAY
+   still join as a leaf. Note that a legacy RAN will not recognize when a
+   reserved field is used and will not turn to a leaf when the "T" flag is set.
    </t>
 
 
@@ -241,19 +304,23 @@
    <section anchor='mig'><name>Inconsistent State While Migrating</name>
 
    <t>
-   When the "T" flag is turned on in the configuration option by the root, the
+   When the "T" flag is turned on in the configuration option by the Root, the
    information slowly percolates through the DODAG as the DIO gets propagated.
-   Some nodes will see the flag and start sourcing packets in the compressed
-   form while other nodes in the same RPL Instance are still not aware of it.
-   Conversely, in non-storing mode, the root will start using <xref target='RFC8138'/> with a
-   SRH-6LoRH that routes all the way to the last router or possibly to the leaf,
-   if the leaf supports <xref target='RFC8138'/>.
    </t>
 
    <t>
-   This is why it is required that all the routers in the RPL Instance support
-   <xref target='RFC8138'/> at the time of the switch, and all nodes that do not
-   support <xref target='RFC8138'/> only operate as leaves.
+   Some nodes will see the flag and start sourcing packets in the compressed
+   form while other nodes in the same RPL Instance are still not aware of it.
+   Conversely, in non-storing mode, the Root will start using
+   <xref target='RFC8138'/> with a Source Routing Header 6LoRH (SRH-6LoRH)
+   that routes all the way to the parent router or to the leaf.
+   </t>
+
+   <t>
+   To ensure that a packet is forwarded across the RPL Instance in the form in
+   which it was generated, it is required that all the routers support
+   <xref target='RFC8138'/> at the time of the switch, and that all nodes that
+   do not support <xref target='RFC8138'/> only operate as leaves.
    </t>
 
    <t>
@@ -269,24 +336,42 @@
 
    <section anchor='sic'><name>Single RPL Instance Scenario</name>
    <t>
-   In a Single RPL Instance Scenario, nodes that support <xref target='RFC8138'/> are configured
-   with a new OCP, that may use the same OF operation or a variation of it. The
-   root sets the "T" flag at the time it migrates to the new OCP. As a result,
-   nodes that do not support <xref target='RFC8138'/> join as leaves and do not forward packets
-   anymore. The leaves generate packets without compression. The parents
-   - which support <xref target='RFC8138'/> - may encapsulate the packets using <xref target='RFC8138'/> if
-   needed. The other way around, the root encapsulates packets to the leaves all
-   the way to the parent, which decapsulate and distribute the uncompressed
-   inner packet to the leaf.
+   In a Single RPL Instance Scenario, nodes that support <xref target='RFC8138'/> are configured with a new OCP, that may use the same OF operation or a variation of it,
+   while nodes that do not support <xref target='RFC8138'/> are not, but are configured
+   to join an unknown OCP.
+  </t>
+
+   <t>
+   The Root migrates to the new OCP before it sets the "T" flag, so that nodes
+   that do not support <xref target='RFC8138'/> are all attached as leaves when
+   the "T" flag is eventually set.
+  </t>
+
+   <t>
+   The parent router - which supports <xref target='RFC8138'/> - compresses the
+   packets originated from the leaf and uncompresses the packets going to the
+   leaf. This may be done on the fly by the parent of a non-capable RAL, or as
+   part of the tunneling operation between the parent and the Root,
+   if the leaf behaves as a RUL. This is described in section 7, 8, and 9 of
+   <xref target='I-D.ietf-roll-useofrplinfo'/>.
+  </t>
+
+   <t>
+   Note that though tunneling from the Root to the parent is the generic case
+   for RULs, on paper it is possible for the Root to avoid it for the traffic
+   that it originates. The Root SHOULD always use tunneling to the parent of a
+   RUL, even for its own packets, unless it knows that the leaf supports
+   <xref target='RFC8138'/>.
    </t>
 
    <t>
    This scenario presents a number of caveats:
    </t><ul spacing='normal'>
    <li>
-   The method consumes an extra OCP. It also requires a means to signal the
-   capabilities of the leaf, e.g., using <xref target='I-D.ietf-roll-capabilities'>
-   "RPL Capabilities"</xref>.
+   The method consumes an extra OCP. It also forces nodes that do not support
+   <xref target='RFC8138'/> to operate as RULs, unless there is a method
+   to let the parent router know that it must uncompress the packet for this
+   RAL.
    </li>
    <li>
    If the RPL implementation of a node does not turn it to a leaf when the OCP is changed to
@@ -297,19 +382,18 @@
    then that node will loose all its parent at the time of the migration and it
    will be stalled until a parent is deployed with the new capability.
    </li>
-   <li>
-   Nodes that only support <xref target='RFC8138'/> for forwarding may not parse the RPI in
-   native form. If such nodes are present, the parent needs to encapsulate with
-   <xref target='RFC8138'/>.
-   </li>
-   </ul><t>
-   </t>
+   </ul>
+
 
    </section> <!--"Single Instance Scenario"-->
 
    <section anchor='dic'><name>Double RPL Instances Scenario</name>
    <t>An alternative to the Single RPL Instance Scenario is to deploy an additional
    RPL Instance for the nodes that support <xref target='RFC8138'/>.
+
+   </t>
+
+   <t>
    The two RPL Instances operate independently as specified
    in <xref target='RFC6550'/>.  The preexisting RPL Instance does not use
    <xref target='RFC8138'/>, whereas the new RPL Instance does. This is signaled
@@ -371,6 +455,15 @@
 
    <section anchor='sec'><name>Security Considerations</name>
     <t>
+   First of all, it is worth noting that with <xref target='RFC6550'/>, every
+   node in the LLN that is RPL-aware can inject any RPL-based attack in the
+   network. A trust model MUST be put in place so that rogue nodes are excluded
+   from participating to the RPL and the 6LowpAN signaling, and from the data
+   packet exchange.  This trust model could be at a minimum based on a Layer-2
+   Secure joining and the Link-Layer security. This is a generic RPL and 6LoWPAN
+   requirement, see Req5.1 in Appendix of <xref target='RFC8505'/>.
+ </t>
+    <t>
     Setting the "T" flag before some routers are upgraded may cause a loss
     of packets. The new bit is protected as the rest of the configuration so
     this is just one of the many attacks that can happen if an attacker manages
@@ -387,8 +480,7 @@
    </section>
 
    <section><name>Acknowledgments</name>
-   <t>The authors wish to thank Rahul Jadhav for his in-depth review and
-   constructive suggestions.
+   <t>The authors wish to thank Dominique Barthel and Rahul Jadhav for their in-depth reviews and constructive suggestions.
    </t>
    </section><!-- ack -->
 </middle>
@@ -402,12 +494,17 @@
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/> <!-- RPL -->
+  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7102.xml'/> <!-- RPI -->
+ 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7228.xml'/> <!-- RPI -->
       <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-useofrplinfo.xml'/>
       <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
    </references>
    <references><name>Informative References</name>
+   	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6553.xml'/> <!-- RPI -->
+
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
-      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-capabilities.xml'/>
+  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/> <!--6LoWPAN ND -->
+     <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-capabilities.xml'/>
    </references>
 </back>
 
