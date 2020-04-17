@@ -5,18 +5,19 @@
 ROLL                                                     P. Thubert, Ed.
 Internet-Draft                                                   L. Zhao
 Updates: 6550, 8138 (if approved)                          Cisco Systems
-Intended status: Standards Track                           24 March 2020
-Expires: 25 September 2020
+Intended status: Standards Track                           17 April 2020
+Expires: 19 October 2020
 
 
-                   Configuration option for RFC 8138
-                   draft-ietf-roll-turnon-rfc8138-05
+       A RPL Configuration Option for the 6LoWPAN Routing Header
+                   draft-ietf-roll-turnon-rfc8138-06
 
 Abstract
 
-   This document complements RFC 8138 and dedicates a bit in the RPL
-   configuration option defined in RFC 6550 to indicate whether RFC 8138
-   compression is used within the RPL Instance.
+   This document updates RFC 8138 and RFC 6550 by defining a bit in the
+   RPL configuration option to indicate whether RFC 8138 compression is
+   used within the RPL Instance, and specify the behavior of RFC
+   8138-capable nodes when the bit is set and reset.
 
 Status of This Memo
 
@@ -33,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 September 2020.
+   This Internet-Draft will expire on 19 October 2020.
 
 Copyright Notice
 
@@ -52,10 +53,9 @@ Copyright Notice
 
 
 
-
-Thubert & Zhao          Expires 25 September 2020               [Page 1]
+Thubert & Zhao           Expires 19 October 2020                [Page 1]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
 Table of Contents
@@ -71,11 +71,11 @@ Table of Contents
      5.1.  Inconsistent State While Migrating  . . . . . . . . . . .   6
      5.2.  Single RPL Instance Scenario  . . . . . . . . . . . . . .   6
      5.3.  Double RPL Instances Scenario . . . . . . . . . . . . . .   7
-     5.4.  Rolling Back  . . . . . . . . . . . . . . . . . . . . . .   7
+     5.4.  Rolling Back  . . . . . . . . . . . . . . . . . . . . . .   8
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   8
-   9.  Normative References  . . . . . . . . . . . . . . . . . . . .   8
+   8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   9
+   9.  Normative References  . . . . . . . . . . . . . . . . . . . .   9
    10. Informative References  . . . . . . . . . . . . . . . . . . .   9
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  10
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Thubert & Zhao          Expires 25 September 2020               [Page 2]
+Thubert & Zhao           Expires 19 October 2020                [Page 2]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
 2.  Terminology
@@ -165,9 +165,9 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
 
 
-Thubert & Zhao          Expires 25 September 2020               [Page 3]
+Thubert & Zhao           Expires 19 October 2020                [Page 3]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
 2.3.  BCP 14
@@ -221,9 +221,9 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
 
 
-Thubert & Zhao          Expires 25 September 2020               [Page 4]
+Thubert & Zhao           Expires 19 October 2020                [Page 4]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
 5.  Transition Scenarios
@@ -277,9 +277,9 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
 
 
-Thubert & Zhao          Expires 25 September 2020               [Page 5]
+Thubert & Zhao           Expires 19 October 2020                [Page 5]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
 5.1.  Inconsistent State While Migrating
@@ -333,9 +333,9 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
 
 
-Thubert & Zhao          Expires 25 September 2020               [Page 6]
+Thubert & Zhao           Expires 19 October 2020                [Page 6]
 
-Internet-Draft              Enabling RFC 8138                 March 2020
+Internet-Draft                Turn On 6LoRH                   April 2020
 
 
    This scenario presents a number of caveats:
@@ -376,6 +376,24 @@ Internet-Draft              Enabling RFC 8138                 March 2020
    least two RPL Instances and demands management capabilities to
    introduce new RPL Instances and deprecate old ones.
 
+   The 2 instances MUST be operated with the same security guarantees,
+   e.g., both "unsecured" with a lower layer security of a same
+   strength, both "preinstalled" or both "authenticated" security mode
+   (see section 3.2.3 of [RFC6550] for more details on those modes).
+   The latter mode could be use to enforce the segregation of updated
+   and non-updated nodes, by providing the keys for joining as routers
+   to the updated nodes only.
+
+
+
+
+
+
+Thubert & Zhao           Expires 19 October 2020                [Page 7]
+
+Internet-Draft                Turn On 6LoRH                   April 2020
+
+
 5.4.  Rolling Back
 
    After downgrading a network to turn the [RFC8138] compression off,
@@ -386,13 +404,6 @@ Internet-Draft              Enabling RFC 8138                 March 2020
    It is RECOMMENDED to only deploy nodes that support [RFC8138] in a
    network where the compression is turned on.  A node that does not
    support [RFC8138] MUST only be used as a leaf.
-
-
-
-Thubert & Zhao          Expires 25 September 2020               [Page 7]
-
-Internet-Draft              Enabling RFC 8138                 March 2020
-
 
 6.  IANA Considerations
 
@@ -432,6 +443,13 @@ Internet-Draft              Enabling RFC 8138                 March 2020
    network, at an additional cost of bandwidth for packets in the
    uncompressed form.
 
+
+
+Thubert & Zhao           Expires 19 October 2020                [Page 8]
+
+Internet-Draft                Turn On 6LoRH                   April 2020
+
+
 8.  Acknowledgments
 
    The authors wish to thank Dominique Barthel and Rahul Jadhav for
@@ -441,15 +459,6 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
-
-
-
-
-Thubert & Zhao          Expires 25 September 2020               [Page 8]
-
-Internet-Draft              Enabling RFC 8138                 March 2020
-
-
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
@@ -484,10 +493,18 @@ Internet-Draft              Enabling RFC 8138                 March 2020
    [UNAWARE-LEAVES]
               Thubert, P. and M. Richardson, "Routing for RPL Leaves",
               Work in Progress, Internet-Draft, draft-ietf-roll-unaware-
-              leaves-13, 17 March 2020, <https://tools.ietf.org/html/
-              draft-ietf-roll-unaware-leaves-13>.
+              leaves-15, 15 April 2020, <https://tools.ietf.org/html/
+              draft-ietf-roll-unaware-leaves-15>.
 
 10.  Informative References
+
+
+
+
+Thubert & Zhao           Expires 19 October 2020                [Page 9]
+
+Internet-Draft                Turn On 6LoRH                   April 2020
+
 
    [RFC6553]  Hui, J. and JP. Vasseur, "The Routing Protocol for Low-
               Power and Lossy Networks (RPL) Option for Carrying RPL
@@ -497,15 +514,6 @@ Internet-Draft              Enabling RFC 8138                 March 2020
 
    [RFC8138]  Thubert, P., Ed., Bormann, C., Toutain, L., and R. Cragie,
               "IPv6 over Low-Power Wireless Personal Area Network
-
-
-
-
-Thubert & Zhao          Expires 25 September 2020               [Page 9]
-
-Internet-Draft              Enabling RFC 8138                 March 2020
-
-
               (6LoWPAN) Routing Header", RFC 8138, DOI 10.17487/RFC8138,
               April 2017, <https://www.rfc-editor.org/info/rfc8138>.
 
@@ -518,9 +526,9 @@ Internet-Draft              Enabling RFC 8138                 March 2020
    [CAPABILITIES]
               Jadhav, R., Thubert, P., Richardson, M., and R. Sahoo,
               "RPL Capabilities", Work in Progress, Internet-Draft,
-              draft-ietf-roll-capabilities-02, 11 March 2020,
+              draft-ietf-roll-capabilities-03, 16 April 2020,
               <https://tools.ietf.org/html/draft-ietf-roll-capabilities-
-              02>.
+              03>.
 
 Authors' Addresses
 
@@ -549,12 +557,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-Thubert & Zhao          Expires 25 September 2020              [Page 10]
+Thubert & Zhao           Expires 19 October 2020               [Page 10]
