@@ -13,10 +13,10 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-07">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-08">
 <front>
 
-   <title abbrev='Turn On 6LoRH'>A RPL Configuration Option for the 6LoWPAN Routing Header</title>
+   <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
 
 
    <author fullname='Pascal Thubert' initials='P.' role='editor' surname='Thubert'>
@@ -57,7 +57,7 @@
    <abstract>
       <t>
       This document updates RFC 8138 and RFC 6550 by defining
-      a bit in the RPL configuration option to indicate whether RFC 8138
+      a bit in the RPL DODAG Configuration Option to indicate whether RFC 8138
       compression is used within the RPL Instance, and specify the
       behavior of RFC 8138-capable nodes when the bit is set and reset.
       </t>
@@ -67,34 +67,41 @@
 <middle>
    <section><name>Introduction</name>
       <t>
-      The transition of a RPL <xref target='RFC6550'/> network to activate the
-      compression defined in <xref target='RFC8138'/> can only be done when all
-      routers in the network support it.  Otherwise, a non-capable node acting as a router
-      would drop the compressed packets and black-hole its subDAG. In a mixed
-      case with both RFC8138-capable and non-capable nodes, the compression
-      may be turned on only if all the non-capable nodes act as Hosts and
-      their RPL parents handle the compression/decompression for them.
+      The packet compression technique defined in <xref target='RFC8138'/> can
+      only be activated in a RPL <xref target='RFC6550'/> network when all the
+      nodes support it. Otherwise, a non-capable node acting as leaf-only would
+      fail to communicate, and acting as a router it would drop the compressed
+      packets and black-hole a portion of the network.
       </t>
       <t>
-      This document complements <xref target='RFC8138'/> and dedicates a flag in the RPL
-      configuration option to indicate whether <xref target='RFC8138'/> compression should be
-      used within the RPL Instance. The setting of this new flag is controlled by the
-      Root and propagates as is in the whole network. When the bit is not set,
-      source nodes that support <xref target='RFC8138'/> should refrain from using the
-      compression unless the information is superseded by configuration.
+      The original idea was to use a flag day but that proved impractical in a
+      number of situations such as a large metering network that is used in
+      production and incurs financial losses when interrupted.
       </t>
       <t>
-      With RPL, a leaf is an IPv6 Host, which implies that leaves do not forward packets.
-      This specification provides scenarios that force a non-capable RPL-Aware Node
-      (RAN) to become a leaf.
-      The parent router must know, e.g., by configuration, or leveraging
-      <xref target='I-D.ietf-roll-capabilities'>"RPL Capabilities"</xref>,
-      when a leaf does not support the compression defined in
-      <xref target='RFC8138'/>. This is implicitly the case for a RPL-Unaware
-      Leaf (RUL) but is not known for a RPL-Aware Leaf (RAL). The parent router
-      must uncompress the packets before delivering them to a non-capable leaf
-      and it must compress the traffic from the leaf.
+      This specification is designed for the scenario where a live network is
+      upgraded to support <xref target='RFC8138'/>. During the migration, the
+      compression should remain inactive, until all nodes are upgraded.
+      This document complements <xref target='RFC8138'/> and dedicates a flag in
+      the RPL DODAG Configuration Option to indicate whether the
+      <xref target='RFC8138'/> compression should be used within the RPL DODAG.
       </t>
+      <t>
+      The setting of this new flag is controlled by the Root and propagates as
+      is in the whole network as part of the normal RPL signaling.
+      </t>
+      <t>
+      The idea is to use the flag to maintain the compression inactive during
+      the migration phase. When the migration is complete (e.g., as known by
+      network management and/or inventory), the flag is set and the compression
+      is globally activated in the whole DODAG.
+      </t>
+      <!--
+      The appendix proposes a method to isolate the legacy nodes that cannot be
+      upgraded in a separate instance where the compression remains off.
+      Upgraded nodes can participate to that instance as routers but will prefer
+      an upgraded instance for their own traffic, so they can use the compression.
+       -->
 
    </section><!-- title="Introduction"-->
 
@@ -163,7 +170,7 @@
     </dl>
 </section>	<!-- end section "Glossary" -->
 
-<section anchor='bcp'><name>BCP 14</name>
+<section anchor='bcp'><name>Requirements Language</name>
 <t>
 
     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -173,33 +180,65 @@
     appear in all capitals, as shown here.
 
 </t>
-</section>	<!-- end section "BCP 14" -->
+</section>	<!-- end section "Requirements Language" -->
 
 
 </section>	<!-- end section "Terminology" -->
 
 
-   <section><name>Updating RFC 6550</name>
+   <section><name>The RPL DODAG Configuration Option</name>
+
+   <t>
+   The DODAG Configuration Option is defined in Section 6.7.6 of <xref target=
+   'RFC6550'/>.
+      </t>
+      <t>
+   The RPL DODAG Configuration Option is typically placed in
+   a DODAG Information Object (DIO) message. The DIO message propagates down the
+   DODAG to form and then maintain its structure. The DODAG Configuration Option
+   is copied unmodified from parents to children.
+      </t>
+      <t>
+   As shown in <xref target="RPLDCO"/>, the DODAG Configuration Option was
+   designed with 4 bit positions reserved for future use as Flags.
+   </t>
+
+<figure anchor="RPLDCO">
+          <name>DODAG Configuration Option (Partial View) </name>
+       <artwork align="center" name="" type="" alt=""><![CDATA[
+
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|   Type = 0x04 |Opt Length = 14| Flags |A|       ...           |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                     +
+|                               ...                             |
+]]></artwork>
+</figure>
    <t>
    This specification defines a new flag "Enable RFC8138 Compression" (T).
-   The "T" flag is set to turn on the use of the compression of RPL artifacts
-   with <xref target='RFC8138'/> within a RPL Instance. If a RPL Instance has
-   multiple Roots then they must be coordinated to use the same setting.
+   The "T" flag is set to turn-on the use of the compression of RPL artifacts
+   with <xref target='RFC8138'/> within the DODAG. The new "T" flag is encoded
+   in one of the reserved bits in the RPL DODAG Configuration Option. The
+   suggested bit position of the "T" flag is indicated in <xref target='iana'/>.
    </t>
    <t>
-   RPL defines a Configuration Option that is registered to IANA in section
-   20.14. of <xref target='RFC6550'/>. The "T" flag is encoded in one of the
-   reserved control bits in the RPL Configuration Option. The bit position of
-   the "T" flag is indicated in <xref target='iana'/>.
+   /[RFC6550] states,
+
+   <xref target='RFC6550'/> states, when referring to the DODAG Configuration
+   Option, that "Nodes other than the DODAG Root MUST
+   NOT modify this information when propagating the DODAG Configuration option".
+   Therefore, even a legacy parent propagates the "T" flag as set by the Root
+   whether it supports this specification or not. So when the "T" flag is set,
+   it is transparently flooded to all the nodes in the DODAG.
    </t>
+
 
    <t>
    Section 6.3.1.
    of <xref target='RFC6550'/> defines a 3-bit Mode of Operation (MOP) in the
    DIO Base Object. The new "T" flag is defined only for MOP value between 0 to
-   6. For a MOP value of 7 or above, the flag MAY indicate something different
-   and MUST NOT be interpreted as "Enable RFC8138 Compression" unless the
-   specification of the MOP indicates to do so.
+   6.
    </t>
    </section><!-- Updating RFC 6550-->
 
@@ -209,34 +248,42 @@
 
 
    <t>
-   A node that supports this specification MUST source packets in the compressed
-   form using <xref target='RFC8138'/> if and only if the "T" flag
-   is set. This behaviour can be overridden by the configuration of the
-   node in order to cope with intermediate implementations of the Root that
-   support <xref target='RFC8138'/> but not this specification and cannot set
-   the "T" flag.
+   A node SHOULD source packets in the compressed form using
+   <xref target='RFC8138'/> if and only if the "T" flag
+   is set. This behaviour can be overridden by e.g., configuration or network
+   management. Overriding may be needed e.g., to cope with a legacy
+   implementations of the Root that supports <xref target='RFC8138'/> but not
+   this specification and cannot set the "T" flag.
    </t>
-
    <t>
    The decision of using <xref target='RFC8138'/> is made by the originator of
    the packet depending on its capabilities and its knowledge of the state of
    the "T" flag.
    A router that encapsulates a packet is the originator of the resulting packet
-   and decides whether to compress the outer headers as indicated above.
+   and is responsible to compress the outer headers with <xref target='RFC8138'/>, but it MUST leave the encapsulated packet as is.
+   </t>
+   <t>
    An external target <xref target='I-D.ietf-roll-useofrplinfo'/> is not
    expected to support <xref target='RFC8138'/>.
-   An intermediate router MUST forward the packet in the form that the source
-   used, either compressed or uncompressed, unless it is forwarding to an
-   external target or delivering to a leaf that is not known to support
-   <xref target='RFC8138'/>, in which cases it MUST uncompress the packet.
+   In most cases, packets from/to an external target are tunneled back and forth
+   between the RPL border router and the Root regardless of the MOP used in the
+   RPL DODAG.
+   The inner packet is typically not compressed with <xref target='RFC8138'/> so
+   the 6LR just needs to decapsulate the (compressed) outer header and forward
+   the (uncompressed) inner packet towards the external target.
    </t>
-
-   <!--t>
+   <t>
+   A router MUST uncompress a packet that is to be forwarded to an external
+   target. Otherwise, the router MUST forward the packet in the form that the
+   source used, either compressed or uncompressed.
+   </t>
+   <t>
    A RUL <xref target='I-D.ietf-roll-unaware-leaves'/> is both a leaf and an
    external target . A RUL does not participate in RPL and
-   depends on the parent router to obtain connectivity. Packets from/to a RUL are
-   tunneled back and forth between the parent and to the Root regardless of the MOP used in the RPL Instance.
-   </t-->
+   depends on the parent router to obtain connectivity. In the case of a RUL,
+   forwarding towards an external target actually means delivering the packet.
+   </t>
+
 
 
    </section><!-- Updating RFC 8138 -->
@@ -250,35 +297,179 @@
     be upgraded, and then the network can be rebooted with the
     <xref target='RFC8138'/> compression turned on.
    </t>
-
    <t>
-    A node that supports this specification can work in a network with <xref target='RFC8138'/>
-    compression turned on or off with the "T" flag set accordingly and in a
-    network in transition from off to on or on to off (see <xref target='mig'/>).
+   The intent for this specification is to perform a migration once and for all
+   without the need for a flag day. In particular it is not the intention to
+   undo the setting of the "T" flag. Though it is possible to roll back
+   (see <xref target='rb'/>), adding nodes that do not support
+   <xref target='RFC8138'/> after a roll back may be problematic if the roll
+   back did not fully complete.
    </t>
 
+   <section anchor='coex'><name>Coexistence</name>
+   <t>
+    A node that supports this specification can operate in a network with the
+    <xref target='RFC8138'/> compression turned on or off with the "T" flag set
+    accordingly and in a network in transition from off to on or on to off
+    (see <xref target='mig'/>).
+   </t>
    <t>
     A node that does not support <xref target='RFC8138'/> can interoperate with
-    nodes that do in a network with <xref target='RFC8138'/> compression turned off. If the
-    compression is turned on, the node cannot forward compressed packets and
-    therefore it cannot act as a router. It may remain connected to that network
-    as a leaf, generates uncompressed packets, and can receive
-    packets if they are delivered by the parent router in the uncompressed form.
-    Unless this is known by other means, the node SHOULD join as a RUL as an
-    indication that its parent router needs to uncompress the packets before
-    delivering.
+    nodes that do in a network with <xref target='RFC8138'/> compression turned
+    off. If the compression is turned on, all the RPL-Aware Nodes are expected
+    to be able to handle compressed packets in the compressed form. A node that
+    cannot do so may remain connected to the network as a RUL, but how the node
+    is modified to turn into a RUL is out of scope.
+   </t>
+
+
+   </section><!--Coexistence-->
+
+   <section anchor='mig'><name>Inconsistent State While Migrating</name>
+
+   <t>
+   When the "T" flag is turned on by the Root, the
+   information slowly percolates through the DODAG as the DIO gets propagated.
+   Some nodes will see the flag and start sourcing packets in the compressed
+   form while other nodes in the same RPL DODAG are still not aware of it.
+   Conversely, in non-storing mode, the Root will start using
+   <xref target='RFC8138'/> with a Source Routing Header 6LoRH (SRH-6LoRH)
+   that routes all the way to the parent router or to the leaf.
    </t>
 
    <t>
-   <xref target='RFC6550'/> states that "Nodes other than the DODAG Root MUST
-   NOT modify this information when propagating the DODAG Configuration option".
-   Therefore, even a legacy parent propagates the "T" flag as set by the Root
-   whether it supports this specification or not. So when the "T" flag is set,
-   it is transparently flooded to all the nodes in the RPL Instance.
+   To ensure that a packet is forwarded across the RPL DODAG in the form in
+   which it was generated, it is required that all the RPL nodes support
+   <xref target='RFC8138'/> at the time of the switch.
    </t>
 
    <t>
-   Sections 8.5 and 9.2 of <xref target='RFC6550'/> also suggests that a
+   Setting the "T" flag is ultimately the responsibility of the Network
+   Administrator. The expectation is that the network management or upgrading
+   tools in place enable the Network Administrator to know when all the nodes
+   that may join a DODAG were migrated. In the case of a RPL instance with
+   multiple Roots, all nodes that participate to the RPL Instance may
+   potentially join any DODAG.
+   The network MUST be operated with the "T" flag reset until all nodes in the
+   RPL Instance are upgraded to support this specification.
+   </t>
+
+   </section> <!--"Transient State while migrating"-->
+
+
+   <section anchor='rb'><name>Rolling Back</name>
+
+  <t>
+   When turning <xref target='RFC8138'/> compression off in the network, the
+   Network Administrator MUST wait until all nodes have converged to the
+   "T" flag reset before allowing nodes that do not support the compression in
+   the network.
+  </t>
+
+   <t>
+   It is RECOMMENDED to only deploy nodes that support <xref target='RFC8138'/>
+   in a network where the compression is turned on. A node that does not support
+   <xref target='RFC8138'/> MUST only be used as a RUL.
+   </t>
+
+   </section> <!-- Rolling Back -->
+
+   </section> <!-- Transition Scenarios -->
+
+   <section anchor="iana"><name>IANA Considerations</name>
+    <t>
+    IANA is requested to assign a new option flag from the Registry for the
+    "DODAG Configuration Option Flags" that was created for
+    <xref target='RFC6550'/> as follows:
+    </t>
+
+   <table  anchor="nexndopt"><name>New DODAG Configuration Option Flag</name>
+   <thead>
+      <tr><td>Bit Number</td><td>Capability Description</td><td>Reference</td></tr>
+   </thead><tbody>
+      <tr><td>2 (suggested)</td><td>Turn on RFC8138 Compression (T)</td><td>THIS RFC</td></tr>
+   </tbody>
+   </table>
+
+    <t>
+    The DODAG Configuration Option Flags defined so far will be obsolete for
+    RPL Mode of Operation (MOP) above and including 7.
+    </t>
+    <t>
+    IANA is requested to update the name of the Registry from "DODAG Configuration Option Flags" to "DODAG Configuration Option Flags for RPL MOP 0..6".
+    </t>
+    <t>
+    When MOP values of 7 and more are defined, a new registry will be needed.
+    </t>
+   </section>
+
+   <section anchor='sec'><name>Security Considerations</name>
+    <t>
+   First of all, it is worth noting that with <xref target='RFC6550'/>, every
+   node in the LLN that is RPL-aware can inject any RPL-based attack in the
+   network.
+   A trust model has to be put in place in an effort to exclude rogue nodes from
+   participating to the RPL and the 6LoWPAN signaling, as well as from the data
+   packet exchange.  This trust model could be at a minimum based on a Layer-2
+   Secure joining and the Link-Layer security. This is a generic RPL and 6LoWPAN
+   requirement, see Req5.1 in Appendix of <xref target='RFC8505'/>.
+ </t>
+    <t>
+    Setting the "T" flag before all routers are upgraded may cause a loss
+    of packets. The new bit is protected as the rest of the configuration so
+    this is just one of the many attacks that can happen if an attacker manages
+    to inject a corrupted configuration.
+    </t><t>
+    Setting and resetting the "T" flag may create inconsistencies in the network
+    but as long as all nodes are upgraded to <xref target='RFC8138'/> support they will be able
+    to forward both forms. The source is responsible
+    for selecting whether the packet is compressed or not, and all routers must
+    use the format that the source selected. So the result of an inconsistency
+    is merely that both forms will be present in the network, at an additional
+    cost of bandwidth for packets in the uncompressed form.
+    </t>
+   </section>
+
+   <section><name>Acknowledgments</name>
+   <t>
+   The authors wish to thank Alvaro Retana, Dominique Barthel and Rahul Jadhav
+   for their in-depth reviews and constructive suggestions.
+   </t><t>
+   Also many thanks to Michael Richardson for being always helpful and responsive
+   when need comes.
+   </t>
+   </section><!-- ack -->
+</middle>
+
+<back>
+
+   <displayreference   target="I-D.ietf-roll-useofrplinfo"     to="USEofRPLinfo"/>
+   <displayreference   target="I-D.ietf-roll-unaware-leaves"     to="UNAWARE-LEAVES"/>
+    <references><name>Normative References</name>
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/> <!-- RPL -->
+  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7102.xml'/> <!-- RPI -->
+  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
+
+
+   </references>
+   <references><name>Informative References</name>
+   	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6553.xml'/> <!-- RPI -->
+  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7228.xml'/> <!-- termonology -->
+
+  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/>
+      <!--6LoWPAN ND -->     <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
+
+      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-useofrplinfo.xml'/>
+
+
+   </references>
+
+
+   <!-- section anchor='dic'><name>Double RPL Instances Scenario</name>
+   <t>
+   Sections 8.5 and 9.2 of <xref target='RFC6550'/> suggests that a
    RAN may only attach to a DODAG as a leaf when it does
    not support the Mode of Operation of a RPL Instance, the Objective Function
    (OF) as indicated by the Objective Code Point (OCP) or some other parameters
@@ -291,108 +482,6 @@
    mandatory for routing, such as the OCP, MUST NOT operate as a router but MAY
    still join as a leaf. Note that a legacy RAN will not recognize when a
    reserved field is used and will not turn to a leaf when the "T" flag is set.
-   </t>
-
-
-   <t>
-   The intent for this specification is to perform a migration once and for all
-   without the need for a flag day. In particular it is not the intention to
-   undo the setting of the "T" flag, and though it is possible to roll back
-   (see <xref target='rb'/>), adding nodes that do not support
-   <xref target='RFC8138'/> after a roll back may be problematic if the roll
-   back is not fully complete (see caveats in <xref target='sic'/>).
-   </t>
-
-   <section anchor='mig'><name>Inconsistent State While Migrating</name>
-
-   <t>
-   When the "T" flag is turned on in the configuration option by the Root, the
-   information slowly percolates through the DODAG as the DIO gets propagated.
-   </t>
-
-   <t>
-   Some nodes will see the flag and start sourcing packets in the compressed
-   form while other nodes in the same RPL Instance are still not aware of it.
-   Conversely, in non-storing mode, the Root will start using
-   <xref target='RFC8138'/> with a Source Routing Header 6LoRH (SRH-6LoRH)
-   that routes all the way to the parent router or to the leaf.
-   </t>
-
-   <t>
-   To ensure that a packet is forwarded across the RPL Instance in the form in
-   which it was generated, it is required that all the routers support
-   <xref target='RFC8138'/> at the time of the switch, and that all nodes that
-   do not support <xref target='RFC8138'/> only operate as leaves.
-   </t>
-
-   <t>
-   Setting the "T" flag is ultimately the responsibility of the network
-   administrator. In a case of upgrading a network to turn the compression on,
-   the network SHOULD be operated with the "T" flag reset until all targeted
-   nodes are upgraded to support this specification.  <xref target='sic'/>
-   and <xref target='dic'/> provide possible transition scenarios where this can
-   be enforced.
-   </t>
-
-   </section> <!--"Transient State while migrating"-->
-
-   <section anchor='sic'><name>Single RPL Instance Scenario</name>
-   <t>
-   In a Single RPL Instance Scenario, nodes that support <xref target='RFC8138'/> are configured with a new OCP, that may use the same OF operation or a variation of it,
-   while nodes that do not support <xref target='RFC8138'/> are not, but are configured
-   to join an unknown OCP.
-  </t>
-
-   <t>
-   The Root migrates to the new OCP before it sets the "T" flag, so that nodes
-   that do not support <xref target='RFC8138'/> are all attached as leaves when
-   the "T" flag is eventually set.
-  </t>
-
-   <t>
-   The parent router - which supports <xref target='RFC8138'/> - compresses the
-   packets originated from the leaf and uncompresses the packets going to the
-   leaf. This may be done on the fly by the parent of a non-capable RAL, or as
-   part of the tunneling operation between the parent and the Root,
-   if the leaf behaves as a RUL. This is described in section 7, 8, and 9 of
-   <xref target='I-D.ietf-roll-useofrplinfo'/>.
-  </t>
-
-   <t>
-   Note that though tunneling from the Root to the parent is the generic case
-   for RULs, on paper it is possible for the Root to avoid it for the traffic
-   that it originates. The Root SHOULD always use tunneling to the parent of a
-   RUL, even for its own packets, unless it knows that the leaf supports
-   <xref target='RFC8138'/>.
-   </t>
-
-   <t>
-   This scenario presents a number of caveats:
-   </t><ul spacing='normal'>
-   <li>
-   The method consumes an extra OCP. It also forces nodes that do not support
-   <xref target='RFC8138'/> to operate as RULs, unless there is a method
-   to let the parent router know that it must uncompress the packet for this
-   RAL.
-   </li>
-   <li>
-   If the RPL implementation of a node does not turn it to a leaf when the OCP is changed to
-   an unknown one, then the node may be stalled.
-   </li>
-   <li>
-   If the only possible parents of a node are nodes that do not support <xref target='RFC8138'/>,
-   then that node will loose all its parent at the time of the migration and it
-   will be stalled until a parent is deployed with the new capability.
-   </li>
-   </ul>
-
-
-   </section> <!--"Single Instance Scenario"-->
-
-   <section anchor='dic'><name>Double RPL Instances Scenario</name>
-   <t>An alternative to the Single RPL Instance Scenario is to deploy an additional
-   RPL Instance for the nodes that support <xref target='RFC8138'/>.
-
    </t>
 
    <t>
@@ -412,8 +501,7 @@
    </t>
 
    <t>
-   This method eliminates the risks of nodes being stalled that are described in
-   <xref target='sic'/> but requires implementations to support at least two RPL
+   This method requires implementations to support at least two RPL
    Instances and demands management capabilities to introduce new RPL Instances
    and deprecate old ones.
    </t>
@@ -428,97 +516,10 @@
    </t>
 
 
-   </section> <!-- Double Instance Scenario -->
-
-
-   <section anchor='rb'><name>Rolling Back</name>
-
-  <t>
-   After downgrading a network to turn the <xref target='RFC8138'/> compression
-   off, the administrator SHOULD make sure that all nodes have converged to the
-   "T" flag reset before allowing nodes that do not support the compression in
-   the network (see caveats in <xref target='sic'/>).
-  </t>
-
-   <t>
-   It is RECOMMENDED to only deploy nodes that support <xref target='RFC8138'/>
-   in a network where the compression is turned on. A node that does not support
-   <xref target='RFC8138'/> MUST only be used as a leaf.
-   </t>
-
-   </section> <!-- Rolling Back -->
-
-   </section> <!-- Transition Scenarios -->
-
-   <section anchor="iana"><name>IANA Considerations</name>
-    <t>
-    This specification updates the Registry for the "DODAG Configuration Option
-    Flags" that was created for <xref target='RFC6550'/> as follows:
-    </t>
-
-   <table  anchor="nexndopt"><name>New DODAG Configuration Option Flag</name>
-   <thead>
-      <tr><td>Bit Number</td><td>Capability Description</td><td>Reference</td></tr>
-   </thead><tbody>
-      <tr><td>2</td><td>Turn on RFC8138 Compression (T)</td><td>THIS RFC</td></tr>
-   </tbody>
-   </table>
-
    </section>
 
-   <section anchor='sec'><name>Security Considerations</name>
-    <t>
-   First of all, it is worth noting that with <xref target='RFC6550'/>, every
-   node in the LLN that is RPL-aware can inject any RPL-based attack in the
-   network. A trust model MUST be put in place so that rogue nodes are excluded
-   from participating to the RPL and the 6LowpAN signaling, and from the data
-   packet exchange.  This trust model could be at a minimum based on a Layer-2
-   Secure joining and the Link-Layer security. This is a generic RPL and 6LoWPAN
-   requirement, see Req5.1 in Appendix of <xref target='RFC8505'/>.
- </t>
-    <t>
-    Setting the "T" flag before some routers are upgraded may cause a loss
-    of packets. The new bit is protected as the rest of the configuration so
-    this is just one of the many attacks that can happen if an attacker manages
-    to inject a corrupted configuration.
-    </t><t>
-    Setting and resetting the "T" flag may create inconsistencies in the network
-    but as long as all nodes are upgraded to <xref target='RFC8138'/> support they will be able
-    to forward both forms. The source is responsible
-    for selecting whether the packet is compressed or not, and all routers must
-    use the format that the source selected. So the result of an inconsistency
-    is merely that both forms will be present in the network, at an additional
-    cost of bandwidth for packets in the uncompressed form.
-    </t>
-   </section>
+   Double Instance Scenario -->
 
-   <section><name>Acknowledgments</name>
-   <t>The authors wish to thank Dominique Barthel and Rahul Jadhav for their in-depth reviews and constructive suggestions.
-   </t>
-   </section><!-- ack -->
-</middle>
 
-<back>
-
-   <displayreference   target="I-D.ietf-roll-useofrplinfo"     to="USEofRPLinfo"/>
-   <displayreference   target="I-D.ietf-roll-unaware-leaves"     to="UNAWARE-LEAVES"/>
-   <displayreference   target="I-D.ietf-roll-capabilities"        to="CAPABILITIES"/>
-   <references><name>Normative References</name>
-	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/> <!-- BCP14 -->
-	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/> <!-- BCP14 -->
-	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/> <!-- RPL -->
-  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7102.xml'/> <!-- RPI -->
- 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7228.xml'/> <!-- RPI -->
-      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-useofrplinfo.xml'/>
-      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
-   </references>
-   <references><name>Informative References</name>
-   	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6553.xml'/> <!-- RPI -->
-
-	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
-  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/> <!--6LoWPAN ND -->
-     <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-capabilities.xml'/>
-   </references>
 </back>
-
 </rfc>
