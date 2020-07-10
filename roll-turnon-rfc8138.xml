@@ -223,8 +223,6 @@
    suggested bit position of the "T" flag is indicated in <xref target='iana'/>.
    </t>
    <t>
-   /[RFC6550] states,
-
    <xref target='RFC6550'/> states, when referring to the DODAG Configuration
    Option, that "Nodes other than the DODAG Root MUST
    NOT modify this information when propagating the DODAG Configuration option".
