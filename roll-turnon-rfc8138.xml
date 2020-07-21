@@ -390,7 +390,7 @@
    </tbody>
    </table>
 
-    <t>
+    <!--t>
     The DODAG Configuration Option Flags defined so far will be obsolete for
     RPL Mode of Operation (MOP) above and including 7.
     </t>
@@ -399,7 +399,7 @@
     </t>
     <t>
     When MOP values of 7 and more are defined, a new registry will be needed.
-    </t>
+    </t-->
    </section>
 
    <section anchor='sec'><name>Security Considerations</name>
