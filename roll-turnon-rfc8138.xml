@@ -227,19 +227,19 @@
    <xref target='RFC6550'/> states, when referring to the DODAG Configuration
    Option, that "Nodes other than the DODAG Root MUST
    NOT modify this information when propagating the DODAG Configuration option".
-   Therefore, even a legacy parent propagates the "T" flag as set by the Root
+   Therefore, a legacy parent propagates the "T" flag as set by the Root
    whether it supports this specification or not. So when the "T" flag is set,
    it is transparently flooded to all the nodes in the DODAG.
   </t>
 
 
    <t>
-   Section 6.3.1.
-   of <xref target='RFC6550'/> defines a 3-bit Mode of Operation (MOP) in the
-   DIO Base Object. The new "T" flag is defined only for MOP value between 0 to
-   6. The compression is implicitely turned on for a MOP value of 7 and above.
+   Section 6.3.1 of <xref target='RFC6550'/>  defines a 3-bit Mode of Operation
+   (MOP) in the DIO Base Object.  For MOP values 0 to 6, the use of compression
+   depends on the “T” flag as specified in this document. A MOP value of 7 and
+   above MUST use compression by default and ignore the setting of the “T” flag.
    </t>
-   </section><!-- Updating RFC 6550-->
+   </section><!-- The RPL DODAG Configuration Option -->
 
 
    <section><name>Updating RFC 8138</name>
