@@ -56,10 +56,11 @@
    <keyword>Draft</keyword>
    <abstract>
       <t>
-      This document updates RFC 8138 and RFC 6550 by defining
-      a bit in the RPL DODAG Configuration Option to indicate whether RFC 8138
-      compression is used within the RPL Instance, and specify the
-      behavior of RFC 8138-capable nodes when the bit is set and reset.
+     This document updates RFC 8138 by defining a bit in the RPL DODAG
+     Configuration Option to indicate whether compression is used within the
+     RPL Instance, and specify the behavior of RFC 8138-capable nodes
+     when the bit is set and reset.
+
       </t>
    </abstract>
 </front>
@@ -219,26 +220,24 @@
    This specification defines a new flag "Enable RFC8138 Compression" (T).
    The "T" flag is set to turn-on the use of the compression of RPL artifacts
    with <xref target='RFC8138'/> within the DODAG. The new "T" flag is encoded
-   in one of the reserved bits in the RPL DODAG Configuration Option. The
+   in the Flags field in the RPL DODAG Configuration Option. The
    suggested bit position of the "T" flag is indicated in <xref target='iana'/>.
    </t>
    <t>
-   /[RFC6550] states,
-
    <xref target='RFC6550'/> states, when referring to the DODAG Configuration
    Option, that "Nodes other than the DODAG Root MUST
    NOT modify this information when propagating the DODAG Configuration option".
    Therefore, even a legacy parent propagates the "T" flag as set by the Root
    whether it supports this specification or not. So when the "T" flag is set,
    it is transparently flooded to all the nodes in the DODAG.
-   </t>
+  </t>
 
 
    <t>
    Section 6.3.1.
    of <xref target='RFC6550'/> defines a 3-bit Mode of Operation (MOP) in the
    DIO Base Object. The new "T" flag is defined only for MOP value between 0 to
-   6.
+   6. The compression is implicitely turned on for a MOP value of 7 and above.
    </t>
    </section><!-- Updating RFC 6550-->
 
@@ -332,7 +331,7 @@
    information slowly percolates through the DODAG as the DIO gets propagated.
    Some nodes will see the flag and start sourcing packets in the compressed
    form while other nodes in the same RPL DODAG are still not aware of it.
-   Conversely, in non-storing mode, the Root will start using
+   In non-storing mode, the Root will start using
    <xref target='RFC8138'/> with a Source Routing Header 6LoRH (SRH-6LoRH)
    that routes all the way to the parent router or to the leaf.
    </t>
@@ -452,14 +451,14 @@
   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7102.xml'/> <!-- RPI -->
   	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8138.xml'/> <!-- 6LoRH for RPL artifacts -->
 
+  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/>
+      <!--6LoWPAN ND -->     <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
 
    </references>
    <references><name>Informative References</name>
    	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6553.xml'/> <!-- RPI -->
   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7228.xml'/> <!-- termonology -->
 
-  	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/>
-      <!--6LoWPAN ND -->     <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
 
       <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-useofrplinfo.xml'/>
 
