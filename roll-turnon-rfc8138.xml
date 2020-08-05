@@ -235,9 +235,8 @@
 
    <t>
    Section 6.3.1 of <xref target='RFC6550'/>  defines a 3-bit Mode of Operation
-   (MOP) in the DIO Base Object.
-   This specification applies to MOP values 0 to 6. For a MOP value of 7 (and
-   above when extended), the compression MUST be used by default regardless of
+   (MOP) in the DIO Base Object. This specification applies to MOP values 0 to 6.
+   For a MOP value of 7, the compression MUST be used by default regardless of
    the setting of the “T” flag.
    </t>
    </section><!-- The RPL DODAG Configuration Option -->
@@ -444,8 +443,8 @@
 
    <section><name>Acknowledgments</name>
    <t>
-   The authors wish to thank Alvaro Retana, Dominique Barthel and Rahul Jadhav
-   for their in-depth reviews and constructive suggestions.
+   The authors wish to thank Carles Gomez, Alvaro Retana, Dominique Barthel and
+   Rahul Jadhav for their in-depth reviews and constructive suggestions.
    </t><t>
    Also many thanks to Michael Richardson for being always helpful and responsive
    when need comes.

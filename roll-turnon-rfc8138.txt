@@ -75,7 +75,7 @@ Table of Contents
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   8
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .   8
-   10. Informative References  . . . . . . . . . . . . . . . . . . .   8
+   10. Informative References  . . . . . . . . . . . . . . . . . . .   9
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
 
 1.  Introduction
@@ -215,8 +215,8 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
    Section 6.3.1 of [RFC6550] defines a 3-bit Mode of Operation (MOP) in
    the DIO Base Object.  This specification applies to MOP values 0 to
-   6.  For a MOP value of 7 (and above when extended), the compression
-   MUST be used by default regardless of the setting of the "T" flag.
+   6.  For a MOP value of 7, the compression MUST be used by default
+   regardless of the setting of the "T" flag.
 
 
 
@@ -396,8 +396,9 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 8.  Acknowledgments
 
-   The authors wish to thank Alvaro Retana, Dominique Barthel and Rahul
-   Jadhav for their in-depth reviews and constructive suggestions.
+   The authors wish to thank Carles Gomez, Alvaro Retana, Dominique
+   Barthel and Rahul Jadhav for their in-depth reviews and constructive
+   suggestions.
 
    Also many thanks to Michael Richardson for being always helpful and
    responsive when need comes.
@@ -441,7 +442,6 @@ Internet-Draft                Turn On 6LoRH                  August 2020
               leaves-18, 12 June 2020, <https://tools.ietf.org/html/
               draft-ietf-roll-unaware-leaves-18>.
 
-10.  Informative References
 
 
 
@@ -449,6 +449,8 @@ Thubert & Zhao           Expires 6 February 2021                [Page 8]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
+
+10.  Informative References
 
    [RFC6553]  Hui, J. and JP. Vasseur, "The Routing Protocol for Low-
               Power and Lossy Networks (RPL) Option for Carrying RPL
@@ -491,8 +493,6 @@ Authors' Addresses
    China
 
    Email: liz3@cisco.com
-
-
 
 
 
