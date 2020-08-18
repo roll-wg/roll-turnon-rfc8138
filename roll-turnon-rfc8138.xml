@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-10">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-11">
 <front>
 
    <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
@@ -70,9 +70,10 @@
       <t>
       The packet compression technique defined in <xref target='RFC8138'/> can
       only be activated in a RPL <xref target='RFC6550'/> network when all the
-      nodes support it. Otherwise, a non-capable node acting as leaf-only would
-      fail to communicate, and acting as a router it would drop the compressed
-      packets and black-hole a portion of the network.
+      nodes support it. Otherwise, if acting as a leaf, a node that does not
+      support the compression would fail to communicate; if acting as a router
+      it would drop the compressed packets and black-hole a portion of the
+      network.
       </t>
       <t>
       The original idea was to use a flag day but that proved impractical in a
@@ -92,7 +93,7 @@
       is in the whole network as part of the normal RPL signaling.
       </t>
       <t>
-      The idea is to use the flag to maintain the compression inactive during
+      The flag is cleared to maintain the compression inactive during
       the migration phase. When the migration is complete (e.g., as known by
       network management and/or inventory), the flag is set and the compression
       is globally activated in the whole DODAG.
@@ -207,21 +208,22 @@
 <figure anchor="RPLDCO">
           <name>DODAG Configuration Option (Partial View) </name>
        <artwork align="center" name="" type="" alt=""><![CDATA[
-
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|   Type = 0x04 |Opt Length = 14| Flags |A|       ...           |
+|   Type = 0x04 |Opt Length = 14| | |T| |A|       ...           |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                     +
-|                               ...                             |
+|                               <- Flags ->       ...           |
+
 ]]></artwork>
 </figure>
    <t>
    This specification defines a new flag "Enable RFC8138 Compression" (T).
    The "T" flag is set to turn-on the use of the compression of RPL artifacts
    with <xref target='RFC8138'/> within the DODAG. The new "T" flag is encoded
-   in the Flags field in the RPL DODAG Configuration Option. The
-   suggested bit position of the "T" flag is indicated in <xref target='iana'/>.
+   in position 2 of the reserved Flags field in the RPL
+   DODAG Configuration Option, and set to 0 in legacy implementations as
+   specified in Section 6.7.6 of <xref target='RFC6550'/>.
    </t>
    <t>
    <xref target='RFC6550'/> states, when referring to the DODAG Configuration
@@ -247,7 +249,7 @@
 
 
    <t>
-   A node SHOULD source packets in the compressed form using
+   A node SHOULD generate packets in the compressed form using
    <xref target='RFC8138'/> if and only if the "T" flag
    is set. This behaviour can be overridden by e.g., configuration or network
    management. Overriding may be needed e.g., to cope with a legacy
@@ -255,17 +257,17 @@
    this specification and cannot set the "T" flag.
    </t>
    <t>
-   The decision of using <xref target='RFC8138'/> is made by the originator of
+   The decision to use <xref target='RFC8138'/> is made by the originator of
    the packet depending on its capabilities and its knowledge of the state of
    the "T" flag.
    A router that encapsulates a packet is the originator of the resulting
-   packet and is responsible to compress the outer headers with <xref target=
-   'RFC8138'/>, but it MUST leave the encapsulated packet as is.
+   packet and is responsible for compressing the outer headers with
+   <xref target= 'RFC8138'/>, but it MUST leave the encapsulated packet as is.
    </t>
    <t>
    An external target <xref target='I-D.ietf-roll-useofrplinfo'/> is not
-   expected to support <xref target='RFC8138'/>. In most cases, packets from and
-   to an external target are tunneled back and forth between the border router
+   expected to support <xref target='RFC8138'/>. In most cases, packets to and
+   from an external target are tunneled back and forth between the border router
    (referred to as 6LR) that serves the external target and the Root, regardless
    of the MOP used in the RPL DODAG.
    The inner packet is typically not compressed with <xref target='RFC8138'/>,
@@ -292,11 +294,12 @@
 
    <section><name>Transition Scenarios</name>
    <t>
-    A node that supports <xref target='RFC8138'/> but not this specification
-    can only be used in an homogeneous network. Enabling the
-    <xref target='RFC8138'/> compression without a turn-on signaling requires a
-    "flag day"; all nodes must be upgraded, and then the network can be rebooted
-    with the <xref target='RFC8138'/> compression turned on.
+   A node that supports <xref target='RFC8138'/> but not this specification
+   can only be used in an homogeneous network.
+   Enabling the <xref target='RFC8138'/> compression without a turn-on signaling
+   method requires a "flag day"; by which time all nodes must be upgraded, and
+   at which point the network can be rebooted with the <xref target='RFC8138'/>
+   compression turned on.
    </t>
    <t>
    The intent for this specification is to perform a migration once and for all
@@ -319,8 +322,8 @@
     nodes that do in a network with <xref target='RFC8138'/> compression turned
     off. If the compression is turned on, all the RPL-Aware Nodes are expected
     to be able to handle compressed packets in the compressed form. A node that
-    cannot do so may remain connected to the network as a RUL, but how the node
-    is modified to turn into a RUL is out of scope.
+    cannot do so may remain connected to the network as a RUL as described in
+    <xref target='I-D.ietf-roll-unaware-leaves'/>.
    </t>
 
 
@@ -364,7 +367,8 @@
    When turning <xref target='RFC8138'/> compression off in the network, the
    Network Administrator MUST wait until all nodes have converged to the
    "T" flag reset before allowing nodes that do not support the compression in
-   the network.
+   the network. To that effect, whether the compression is active in a node
+   SHOULD be exposed the node's management interface.
   </t>
 
    <t>
@@ -378,6 +382,7 @@
    </section> <!-- Transition Scenarios -->
 
    <section anchor="iana"><name>IANA Considerations</name>
+
     <t>
     IANA is requested to assign a new option flag from the Registry for the
     "DODAG Configuration Option Flags" that was created for
@@ -388,6 +393,15 @@
    <thead>
       <tr><td>Bit Number</td><td>Capability Description</td><td>Reference</td></tr>
    </thead><tbody>
+
+   <!--
+
+   Note to IANA:
+   if the bit position is changed, then fig 1 and the text below are impacted
+   and should be modified accordingly
+
+
+   -->
       <tr><td>2 (suggested)</td><td>Turn on RFC8138 Compression (T)</td><td>THIS RFC</td></tr>
    </tbody>
    </table>
@@ -409,9 +423,9 @@
    First of all, it is worth noting that with <xref target='RFC6550'/>, every
    node in the LLN that is RPL-aware can inject any RPL-based attack in the
    network.
-   A trust model has to be put in place in an effort to exclude rogue nodes from
+   A trust model is REQUIRED in an effort to exclude rogue nodes from
    participating to the RPL and the 6LoWPAN signaling, as well as from the data
-   packet exchange.  This trust model could be at a minimum based on a Layer-2
+   packet exchange.  This trust model could at a minimum be based on a Layer-2
    Secure joining and the Link-Layer security. This is a generic RPL and 6LoWPAN
    requirement, see Req5.1 in Appendix of <xref target='RFC8505'/>.
  </t>
