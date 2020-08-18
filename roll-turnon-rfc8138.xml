@@ -251,16 +251,17 @@
    <t>
    A node SHOULD generate packets in the compressed form using
    <xref target='RFC8138'/> if and only if the "T" flag
-   is set. This behaviour can be overridden by e.g., configuration or network
-   management. Overriding may be needed e.g., to cope with a legacy
-   implementation of the Root that supports <xref target='RFC8138'/> but not
-   this specification and cannot set the "T" flag.
+   is set. This behavior can be overridden by configuration or network
+   management. Overriding may be needed e.g., to turn on the compression in a
+   network where all nodes support <xref target='RFC8138'/> but the Root does
+   not support this specification and cannot set the "T" flag, or to disable it
+   locally in case of a problem.
    </t>
    <t>
    The decision to use <xref target='RFC8138'/> is made by the originator of
    the packet depending on its capabilities and its knowledge of the state of
    the "T" flag.
-   A router that encapsulates a packet is the originator of the resulting
+   A router encapsulating a packet is the originator of the resulting
    packet and is responsible for compressing the outer headers with
    <xref target= 'RFC8138'/>, but it MUST leave the encapsulated packet as is.
    </t>
@@ -457,8 +458,10 @@
 
    <section><name>Acknowledgments</name>
    <t>
-   The authors wish to thank Carles Gomez, Alvaro Retana, Dominique Barthel and
-   Rahul Jadhav for their in-depth reviews and constructive suggestions.
+   The authors wish to thank
+   Nagendra Kumar Nainar, Stewart Bryant, Carles Gomez, Alvaro Retana,
+   Dominique Barthel and Rahul Jadhav for their in-depth reviews and
+   constructive suggestions.
    </t><t>
    Also many thanks to Michael Richardson for being always helpful and responsive
    when need comes.
