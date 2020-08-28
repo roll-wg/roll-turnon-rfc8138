@@ -421,14 +421,23 @@
 
    <section anchor='sec'><name>Security Considerations</name>
     <t>
+   It is worth noting that with RPL <xref target='RFC6550'/>, every node in the
+   LLN that is RPL-aware can inject any RPL-based attack in the network.
+   This document applies typically to an existing deployment and does not change
+   its security requirements and settings.
+   It is assumed that the security mechanisms as defined for RPL are followed.
+
+<!--
    First of all, it is worth noting that with <xref target='RFC6550'/>, every
    node in the LLN that is RPL-aware can inject any RPL-based attack in the
    network.
+
    A trust model is REQUIRED in an effort to exclude rogue nodes from
    participating to the RPL and the 6LoWPAN signaling, as well as from the data
    packet exchange.  This trust model could at a minimum be based on a Layer-2
    Secure joining and the Link-Layer security. This is a generic RPL and 6LoWPAN
    requirement, see Req5.1 in Appendix of <xref target='RFC8505'/>.
+   -->
  </t>
     <t>
     Setting the "T" flag before all routers are upgraded may cause a loss
@@ -458,7 +467,7 @@
 
    <section><name>Acknowledgments</name>
    <t>
-   The authors wish to thank
+   The authors wish to thank Meral Shirazipour,
    Nagendra Kumar Nainar, Stewart Bryant, Carles Gomez, Alvaro Retana,
    Dominique Barthel and Rahul Jadhav for their in-depth reviews and
    constructive suggestions.

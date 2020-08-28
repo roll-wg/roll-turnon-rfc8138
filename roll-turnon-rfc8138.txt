@@ -5,8 +5,8 @@
 ROLL                                                     P. Thubert, Ed.
 Internet-Draft                                                   L. Zhao
 Updates: 8138 (if approved)                                Cisco Systems
-Intended status: Standards Track                          18 August 2020
-Expires: 19 February 2021
+Intended status: Standards Track                          28 August 2020
+Expires: 1 March 2021
 
 
     A RPL DODAG Configuration Option for the 6LoWPAN Routing Header
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 February 2021.
+   This Internet-Draft will expire on 1 March 2021.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 1]
+Thubert & Zhao            Expires 1 March 2021                  [Page 1]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 2]
+Thubert & Zhao            Expires 1 March 2021                  [Page 2]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -165,7 +165,7 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 3]
+Thubert & Zhao            Expires 1 March 2021                  [Page 3]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -221,7 +221,7 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 4]
+Thubert & Zhao            Expires 1 March 2021                  [Page 4]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -277,7 +277,7 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 5]
+Thubert & Zhao            Expires 1 March 2021                  [Page 5]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -333,7 +333,7 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 6]
+Thubert & Zhao            Expires 1 March 2021                  [Page 6]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -354,14 +354,11 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 7.  Security Considerations
 
-   First of all, it is worth noting that with [RFC6550], every node in
-   the LLN that is RPL-aware can inject any RPL-based attack in the
-   network.  A trust model is REQUIRED in an effort to exclude rogue
-   nodes from participating to the RPL and the 6LoWPAN signaling, as
-   well as from the data packet exchange.  This trust model could at a
-   minimum be based on a Layer-2 Secure joining and the Link-Layer
-   security.  This is a generic RPL and 6LoWPAN requirement, see Req5.1
-   in Appendix of [RFC8505].
+   It is worth noting that with RPL [RFC6550], every node in the LLN
+   that is RPL-aware can inject any RPL-based attack in the network.
+   This document applies typically to an existing deployment and does
+   not change its security requirements and settings.  It is assumed
+   that the security mechanisms as defined for RPL are followed.
 
    Setting the "T" flag before all routers are upgraded may cause a loss
    of packets.  The new bit is protected as the rest of the
@@ -389,16 +386,19 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 7]
+
+
+
+Thubert & Zhao            Expires 1 March 2021                  [Page 7]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 8.  Acknowledgments
 
-   The authors wish to thank Nagendra Kumar Nainar, Stewart Bryant,
-   Carles Gomez, Alvaro Retana, Dominique Barthel and Rahul Jadhav for
-   their in-depth reviews and constructive suggestions.
+   The authors wish to thank Meral Shirazipour, Nagendra Kumar Nainar,
+   Stewart Bryant, Carles Gomez, Alvaro Retana, Dominique Barthel and
+   Rahul Jadhav for their in-depth reviews and constructive suggestions.
 
    Also many thanks to Michael Richardson for being always helpful and
    responsive when need comes.
@@ -445,7 +445,7 @@ Internet-Draft                Turn On 6LoRH                  August 2020
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 8]
+Thubert & Zhao            Expires 1 March 2021                  [Page 8]
 
 Internet-Draft                Turn On 6LoRH                  August 2020
 
@@ -501,4 +501,4 @@ Authors' Addresses
 
 
 
-Thubert & Zhao          Expires 19 February 2021                [Page 9]
+Thubert & Zhao            Expires 1 March 2021                  [Page 9]
