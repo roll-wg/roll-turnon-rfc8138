@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-11">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-12">
 <front>
 
    <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
@@ -67,28 +67,27 @@
 
 <middle>
    <section><name>Introduction</name>
-      <t>
-      The packet compression technique defined in <xref target='RFC8138'/> can
-      only be activated in a RPL <xref target='RFC6550'/> network when all the
-      nodes support it. Otherwise, if acting as a leaf, a node that does not
-      support the compression would fail to communicate; if acting as a router
-      it would drop the compressed packets and black-hole a portion of the
-      network.
+
+    <t>
+    The design of Low Power and Lossy Networks (LLNs) is generally focused on
+    saving energy, which is the most constrained resource of all. The routing
+    optimizations in the <xref target='RFC6550'>"Routing Protocol for Low Power
+    and Lossy Networks"</xref> (RPL) such as routing along a
+    Destination-Oriented Directed Acyclic Graph (DODAG) to a Root Node and the
+    associated packet compression technique <xref target='RFC8138'/> derive
+    from that primary concern.
+    </t>
+    <t>
+    Enabling <xref target='RFC8138'/> requires a Flag Day where the network is
+    upgraded and rebooted. Otherwise, if acting as a Leaf, a node that does not
+    support the compression would fail to communicate; if acting as a router it
+    would drop the compressed packets and black-hole a portion of the network.
+    This specification enables a hot upgrade where a live network is  migrated. During the migration, the compression remains inactive, until all nodes are upgraded.
       </t>
       <t>
-      The original idea was to use a flag day but that proved impractical in a
-      number of situations such as a large metering network that is used in
-      production and incurs financial losses when interrupted.
-      </t>
-      <t>
-      This specification is designed for the scenario where a live network is
-      upgraded to support <xref target='RFC8138'/>. During the migration, the
-      compression should remain inactive, until all nodes are upgraded.
-      This document complements <xref target='RFC8138'/> and dedicates a flag in
+    This document complements <xref target='RFC8138'/> and dedicates a flag in
       the RPL DODAG Configuration Option to indicate whether the
       <xref target='RFC8138'/> compression should be used within the RPL DODAG.
-      </t>
-      <t>
       The setting of this new flag is controlled by the Root and propagates as
       is in the whole network as part of the normal RPL signaling.
       </t>
@@ -373,9 +372,9 @@
   </t>
 
    <t>
-   It is RECOMMENDED to only deploy nodes that support <xref target='RFC8138'/>
-   in a network where the compression is turned on. A node that does not support
-   <xref target='RFC8138'/> MUST only be used as a RUL.
+   Nodes that do not support <xref target='RFC8138'/> SHOULD NOT be deployed
+   in a network where the compression is turned on. If that it done, the node
+   <xref target='RFC8138'/> can only operate as a RUL.
    </t>
 
    </section> <!-- Rolling Back -->
@@ -424,7 +423,7 @@
    It is worth noting that with RPL <xref target='RFC6550'/>, every node in the
    LLN that is RPL-aware can inject any RPL-based attack in the network.
    This document applies typically to an existing deployment and does not change
-   its security requirements and settings.
+   its security requirements and operations.
    It is assumed that the security mechanisms as defined for RPL are followed.
 
 <!--
