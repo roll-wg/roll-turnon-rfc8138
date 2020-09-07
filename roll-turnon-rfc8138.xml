@@ -158,8 +158,7 @@
     <dt>DODAG:</dt><dd> Destination-Oriented Directed Acyclic Graph </dd>
     <dt>LLN:</dt><dd> Low-Power and Lossy Network </dd>
     <dt>RPL:</dt><dd> IPv6 Routing Protocol for Low-Power and Lossy Networks </dd>
-    <dt>OF:</dt><dd> RPL Objective Function</dd>
-    <dt>OCP:</dt><dd> RPL Objective Code Point</dd>
+    <dt>SubDAG:</dt><dd> Subset of a DAG that is a child of a node </dd>
     <dt>MOP:</dt><dd> RPL Mode of Operation </dd>
     <dt>RPI:</dt><dd> RPL Packet Information </dd>
     <dt>RAL:</dt><dd> RPL-Aware Leaf </dd>
@@ -466,10 +465,11 @@
 
    <section><name>Acknowledgments</name>
    <t>
-   The authors wish to thank Meral Shirazipour, Barry Leiba,
-   Nagendra Kumar Nainar, Stewart Bryant, Carles Gomez, Alvaro Retana,
-   Dominique Barthel and Rahul Jadhav for their in-depth reviews and
-   constructive suggestions.
+   The authors wish to thank
+   Murray Kucherawy, Meral Shirazipour, Barry Leiba, Tirumaleswar Reddy,
+   Nagendra Kumar Nainar, Stewart Bryant, Carles Gomez,
+   and especially Alvaro Retana, Dominique Barthel and Rahul Jadhav for their
+   in-depth reviews and constructive suggestions.
    </t><t>
    Also many thanks to Michael Richardson for being always helpful and responsive
    when need comes.
