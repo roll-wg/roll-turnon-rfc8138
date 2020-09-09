@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-15>
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-15">
 <front>
 
    <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
@@ -304,15 +304,9 @@
    The intent for this specification is to perform a migration once and for all
    without the need for a flag day. In particular it is not the intention to
    undo the setting of the "T" flag.
-   <!--
-   Though it is possible to roll back
-   (see <xref target='rb'/>), adding nodes that do not support
-   <xref target='RFC8138'/> after a roll back may be problematic if the roll
-   back did not fully complete.
-   -->
-   Though it is possible to roll back (see <xref target='rb'/>, the network
-   operator SHOULD ensure that the roll back operation is completed before
-   adding nodes that do not support <xref target='RFC8138'/>.
+   Though it is possible to roll back (see <xref target='rb'/>), the roll back
+   operation SHOULD be complete before the network operator adds nodes
+   that do not support <xref target='RFC8138'/>.
    </t>
 
 
