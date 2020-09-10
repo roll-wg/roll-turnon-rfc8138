@@ -375,16 +375,16 @@ Internet-Draft                Turn On 6LoRH               September 2020
    network, at an additional cost of bandwidth for packets in the
    uncompressed form.
 
-   An attacker in the middle of the network may unset the "T" flag to
-   cause extra energy spending in the subset of the DODAG formed by its
-   descendants (its subDAG).  Conversely it may set the "T" flag, so
-   that nodes located downstream would compress when that it is not
-   desired, potentially resulting in the loss of packets.  In a tree
-   structure, the attacker would be in position to drop the packets from
-   and to the attacked nodes.  So the attacks above would be more
-   complex and more visible than simply dropping selected packets.  The
-   downstream node may have other parents and see both settings, which
-   could raise attention.
+   An attacker may reset the "T" flag to force additional energy
+   consumption of child or descendant nodes in its subDAG.  Conversely
+   it may set the "T" flag, so that nodes located downstream would
+   compress when that it is not desired, potentially resulting in the
+   loss of packets.  In a tree structure, the attacker would be in
+   position to drop the packets from and to the attacked nodes.  So the
+   attacks above would be more complex and more visible than simply
+   dropping selected packets.  The downstream node may have other
+   parents and see both settings, which could raise attention.
+
 
 
 
@@ -398,9 +398,9 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
    The authors wish to thank Murray Kucherawy, Meral Shirazipour, Barry
    Leiba, Tirumaleswar Reddy, Nagendra Kumar Nainar, Stewart Bryant,
-   Carles Gomez, Eric Vyncke, and especially Alvaro Retana, Dominique
-   Barthel and Rahul Jadhav for their in-depth reviews and constructive
-   suggestions.
+   Carles Gomez, Eric Vyncke, Roman Danyliw, Benjamin Kaduk, and
+   especially Alvaro Retana, Dominique Barthel and Rahul Jadhav for
+   their in-depth reviews and constructive suggestions.
 
    Also many thanks to Michael Richardson for being always helpful and
    responsive when need comes.
