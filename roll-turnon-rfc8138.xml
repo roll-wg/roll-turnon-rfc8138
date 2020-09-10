@@ -451,7 +451,7 @@
     cost of bandwidth for packets in the uncompressed form.
 
     </t><t>
-    An attacker may reset the "T" flag to force additional energy consumption of child or descendant nodes in its subDAG.
+    An attacker may unset the "T" flag to force additional energy consumption of child or descendant nodes in its subDAG.
     Conversely it may set the "T" flag, so
     that nodes located downstream would compress when that it is not desired,
     potentially resulting in the loss of packets. In a tree structure, the
