@@ -59,7 +59,7 @@
      This document updates RFC 8138 by defining a bit in the RPL DODAG
      Configuration Option to indicate whether compression is used within the
      RPL Instance, and specify the behavior of RFC 8138-capable nodes
-     when the bit is set and reset.
+     when the bit is set and unset.
 
       </t>
    </abstract>
@@ -78,8 +78,9 @@
     from that primary concern.
     </t>
     <t>
-    Enabling <xref target='RFC8138'/> requires a Flag Day where the network is
-    upgraded and rebooted. Otherwise, if acting as a Leaf, a node that does not
+    Enabling <xref target='RFC8138'/> on a running network requires a Flag Day
+    where the network is  upgraded and rebooted.
+    Otherwise, if acting as a Leaf, a node that does not
     support the compression would fail to communicate; if acting as a router it
     would drop the compressed packets and black-hole a portion of the network.
     This specification enables a hot upgrade where a live network is  migrated. During the migration, the compression remains inactive, until all nodes are upgraded.
@@ -158,7 +159,7 @@
     <dt>DODAG:</dt><dd> Destination-Oriented Directed Acyclic Graph </dd>
     <dt>LLN:</dt><dd> Low-Power and Lossy Network </dd>
     <dt>RPL:</dt><dd> IPv6 Routing Protocol for Low-Power and Lossy Networks </dd>
-    <dt>SubDAG:</dt><dd> Subset of a DAG that is a child of a node </dd>
+    <dt>SubDAG:</dt><dd> A DODAG rooted at a node which is a child of that node and a subset of a larger DAG </dd>
     <dt>MOP:</dt><dd> RPL Mode of Operation </dd>
     <dt>RPI:</dt><dd> RPL Packet Information </dd>
     <dt>RAL:</dt><dd> RPL-Aware Leaf </dd>
@@ -187,18 +188,9 @@
 
 
    <section><name>The RPL DODAG Configuration Option</name>
-
    <t>
    The DODAG Configuration Option is defined in Section 6.7.6 of <xref target=
    'RFC6550'/>.
-      </t>
-      <t>
-   The RPL DODAG Configuration Option is typically placed in
-   a DODAG Information Object (DIO) message. The DIO message propagates down the
-   DODAG to form and then maintain its structure. The DODAG Configuration Option
-   is copied unmodified from parents to children.
-      </t>
-      <t>
    As shown in <xref target="RPLDCO"/>, the DODAG Configuration Option was
    designed with 4 bit positions reserved for future use as Flags.
    </t>
@@ -215,13 +207,14 @@
 
 ]]></artwork>
 </figure>
+
    <t>
    This specification defines a new flag "Enable RFC8138 Compression" (T).
    The "T" flag is set to turn-on the use of the compression of RPL artifacts
    with <xref target='RFC8138'/> within the DODAG. The new "T" flag is encoded
-   in position 2 of the reserved Flags field in the RPL
-   DODAG Configuration Option, and set to 0 in legacy implementations as
-   specified in Section 6.7.6 of <xref target='RFC6550'/>.
+   in position 2 of the reserved Flags field in the RPL DODAG Configuration Option (counting from bit 0 as the most significant bit) and set to 0 in
+   legacy implementations as specified respectively in Sections 20.14 and 6.7.6
+   of <xref target='RFC6550'/>.
    </t>
    <t>
    <xref target='RFC6550'/> states, when referring to the DODAG Configuration
@@ -231,7 +224,12 @@
    whether it supports this specification or not. So when the "T" flag is set,
    it is transparently flooded to all the nodes in the DODAG.
   </t>
-
+      <t>
+   The RPL DODAG Configuration Option is typically placed in
+   a DODAG Information Object (DIO) message. The DIO message propagates down the
+   DODAG to form and then maintain its structure. The DODAG Configuration Option
+   is copied unmodified from parents to children.
+      </t>
 
    <t>
    Section 6.3.1 of <xref target='RFC6550'/>  defines a 3-bit Mode of Operation
@@ -294,7 +292,7 @@
    <section><name>Transition Scenarios</name>
    <t>
    A node that supports <xref target='RFC8138'/> but not this specification
-   can only be used in an homogeneous network.
+   can only be used in a homogeneous network.
    Enabling the <xref target='RFC8138'/> compression without a turn-on signaling
    method requires a "flag day"; by which time all nodes must be upgraded, and
    at which point the network can be rebooted with the <xref target='RFC8138'/>
@@ -354,7 +352,7 @@
    that may join a DODAG were migrated. In the case of a RPL instance with
    multiple Roots, all nodes that participate to the RPL Instance may
    potentially join any DODAG.
-   The network MUST be operated with the "T" flag reset until all nodes in the
+   The network MUST be operated with the "T" flag unset until all nodes in the
    RPL Instance are upgraded to support this specification.
    </t>
 
@@ -366,7 +364,7 @@
   <t>
    When turning <xref target='RFC8138'/> compression off in the network, the
    Network Administrator MUST wait until all nodes have converged to the
-   "T" flag reset before allowing nodes that do not support the compression in
+   "T" flag unset before allowing nodes that do not support the compression in
    the network. To that effect, whether the compression is active in a node
    SHOULD be exposed the node's management interface.
   </t>
@@ -444,7 +442,7 @@
     this is just one of the many attacks that can happen if an attacker manages
     to inject a corrupted configuration.
     </t><t>
-    Setting and resetting the "T" flag may create inconsistencies in the network
+    Setting and unsetting the "T" flag may create inconsistencies in the network
     but as long as all nodes are upgraded to <xref target='RFC8138'/> support
     they will be able to forward both forms. The source is responsible
     for selecting whether the packet is compressed or not, and all routers must
@@ -453,7 +451,7 @@
     cost of bandwidth for packets in the uncompressed form.
 
     </t><t>
-    An attacker in the middle of the network may reset the "T" flag to cause
+    An attacker in the middle of the network may unset the "T" flag to cause
     extra energy spending in the subset of the DODAG formed by its descendants (its subDAG). Conversely it may set the "T" flag, so
     that nodes located downstream would compress when that it is not desired,
     potentially resulting in the loss of packets. In a tree structure, the

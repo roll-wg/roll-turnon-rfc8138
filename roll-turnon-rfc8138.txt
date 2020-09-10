@@ -5,8 +5,8 @@
 ROLL                                                     P. Thubert, Ed.
 Internet-Draft                                                   L. Zhao
 Updates: 8138 (if approved)                                Cisco Systems
-Intended status: Standards Track                       September 9, 2020
-Expires: March 13, 2021
+Intended status: Standards Track                      September 10, 2020
+Expires: March 14, 2021
 
 
     A RPL DODAG Configuration Option for the 6LoWPAN Routing Header
@@ -17,7 +17,7 @@ Abstract
    This document updates RFC 8138 by defining a bit in the RPL DODAG
    Configuration Option to indicate whether compression is used within
    the RPL Instance, and specify the behavior of RFC 8138-capable nodes
-   when the bit is set and reset.
+   when the bit is set and unset.
 
 Status of This Memo
 
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 13, 2021.
+   This Internet-Draft will expire on March 14, 2021.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 1]
+Thubert & Zhao           Expires March 14, 2021                 [Page 1]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -88,13 +88,13 @@ Table of Contents
    and the associated packet compression technique [RFC8138] derive from
    that primary concern.
 
-   Enabling [RFC8138] requires a Flag Day where the network is upgraded
-   and rebooted.  Otherwise, if acting as a Leaf, a node that does not
-   support the compression would fail to communicate; if acting as a
-   router it would drop the compressed packets and black-hole a portion
-   of the network.  This specification enables a hot upgrade where a
-   live network is migrated.  During the migration, the compression
-   remains inactive, until all nodes are upgraded.
+   Enabling [RFC8138] on a running network requires a Flag Day where the
+   network is upgraded and rebooted.  Otherwise, if acting as a Leaf, a
+   node that does not support the compression would fail to communicate;
+   if acting as a router it would drop the compressed packets and black-
+   hole a portion of the network.  This specification enables a hot
+   upgrade where a live network is migrated.  During the migration, the
+   compression remains inactive, until all nodes are upgraded.
 
    This document complements [RFC8138] and dedicates a flag in the RPL
    DODAG Configuration Option to indicate whether the [RFC8138]
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 2]
+Thubert & Zhao           Expires March 14, 2021                 [Page 2]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -154,7 +154,8 @@ Internet-Draft                Turn On 6LoRH               September 2020
    DODAG:  Destination-Oriented Directed Acyclic Graph
    LLN:  Low-Power and Lossy Network
    RPL:  IPv6 Routing Protocol for Low-Power and Lossy Networks
-   SubDAG:  Subset of a DAG that is a child of a node
+   SubDAG:  A DODAG rooted at a node which is a child of that node and a
+      subset of a larger DAG
    MOP:  RPL Mode of Operation
    RPI:  RPL Packet Information
    RAL:  RPL-Aware Leaf
@@ -164,8 +165,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-
-Thubert & Zhao           Expires March 13, 2021                 [Page 3]
+Thubert & Zhao           Expires March 14, 2021                 [Page 3]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -181,15 +181,8 @@ Internet-Draft                Turn On 6LoRH               September 2020
 3.  The RPL DODAG Configuration Option
 
    The DODAG Configuration Option is defined in Section 6.7.6 of
-   [RFC6550].
-
-   The RPL DODAG Configuration Option is typically placed in a DODAG
-   Information Object (DIO) message.  The DIO message propagates down
-   the DODAG to form and then maintain its structure.  The DODAG
-   Configuration Option is copied unmodified from parents to children.
-
-   As shown in Figure 1, the DODAG Configuration Option was designed
-   with 4 bit positions reserved for future use as Flags.
+   [RFC6550].  As shown in Figure 1, the DODAG Configuration Option was
+   designed with 4 bit positions reserved for future use as Flags.
 
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -204,8 +197,9 @@ Internet-Draft                Turn On 6LoRH               September 2020
    (T).  The "T" flag is set to turn-on the use of the compression of
    RPL artifacts with [RFC8138] within the DODAG.  The new "T" flag is
    encoded in position 2 of the reserved Flags field in the RPL DODAG
-   Configuration Option, and set to 0 in legacy implementations as
-   specified in Section 6.7.6 of [RFC6550].
+   Configuration Option (counting from bit 0 as the most significant
+   bit) and set to 0 in legacy implementations as specified respectively
+   in Sections 20.14 and 6.7.6 of [RFC6550].
 
    [RFC6550] states, when referring to the DODAG Configuration Option,
    that "Nodes other than the DODAG Root MUST NOT modify this
@@ -214,6 +208,11 @@ Internet-Draft                Turn On 6LoRH               September 2020
    whether it supports this specification or not.  So when the "T" flag
    is set, it is transparently flooded to all the nodes in the DODAG.
 
+   The RPL DODAG Configuration Option is typically placed in a DODAG
+   Information Object (DIO) message.  The DIO message propagates down
+   the DODAG to form and then maintain its structure.  The DODAG
+   Configuration Option is copied unmodified from parents to children.
+
    Section 6.3.1 of [RFC6550] defines a 3-bit Mode of Operation (MOP) in
    the DIO Base Object.  This specification applies to MOP values 0 to
    6.  For a MOP value of 7, the compression MUST be used by default
@@ -221,7 +220,8 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 4]
+
+Thubert & Zhao           Expires March 14, 2021                 [Page 4]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -262,7 +262,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 5.  Transition Scenarios
 
    A node that supports [RFC8138] but not this specification can only be
-   used in an homogeneous network.  Enabling the [RFC8138] compression
+   used in a homogeneous network.  Enabling the [RFC8138] compression
    without a turn-on signaling method requires a "flag day"; by which
    time all nodes must be upgraded, and at which point the network can
    be rebooted with the [RFC8138] compression turned on.
@@ -277,7 +277,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 5]
+Thubert & Zhao           Expires March 14, 2021                 [Page 5]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -316,14 +316,14 @@ Internet-Draft                Turn On 6LoRH               September 2020
    when all the nodes that may join a DODAG were migrated.  In the case
    of a RPL instance with multiple Roots, all nodes that participate to
    the RPL Instance may potentially join any DODAG.  The network MUST be
-   operated with the "T" flag reset until all nodes in the RPL Instance
+   operated with the "T" flag unset until all nodes in the RPL Instance
    are upgraded to support this specification.
 
 5.3.  Rolling Back
 
    When turning [RFC8138] compression off in the network, the Network
    Administrator MUST wait until all nodes have converged to the "T"
-   flag reset before allowing nodes that do not support the compression
+   flag unset before allowing nodes that do not support the compression
    in the network.  To that effect, whether the compression is active in
    a node SHOULD be exposed the node's management interface.
 
@@ -333,7 +333,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 6]
+Thubert & Zhao           Expires March 14, 2021                 [Page 6]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -366,7 +366,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
    configuration so this is just one of the many attacks that can happen
    if an attacker manages to inject a corrupted configuration.
 
-   Setting and resetting the "T" flag may create inconsistencies in the
+   Setting and unsetting the "T" flag may create inconsistencies in the
    network but as long as all nodes are upgraded to [RFC8138] support
    they will be able to forward both forms.  The source is responsible
    for selecting whether the packet is compressed or not, and all
@@ -375,7 +375,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
    network, at an additional cost of bandwidth for packets in the
    uncompressed form.
 
-   An attacker in the middle of the network may reset the "T" flag to
+   An attacker in the middle of the network may unset the "T" flag to
    cause extra energy spending in the subset of the DODAG formed by its
    descendants (its subDAG).  Conversely it may set the "T" flag, so
    that nodes located downstream would compress when that it is not
@@ -389,7 +389,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 7]
+Thubert & Zhao           Expires March 14, 2021                 [Page 7]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -445,7 +445,7 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 8]
+Thubert & Zhao           Expires March 14, 2021                 [Page 8]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -501,7 +501,7 @@ Authors' Addresses
 
 
 
-Thubert & Zhao           Expires March 13, 2021                 [Page 9]
+Thubert & Zhao           Expires March 14, 2021                 [Page 9]
 
 Internet-Draft                Turn On 6LoRH               September 2020
 
@@ -557,4 +557,4 @@ Internet-Draft                Turn On 6LoRH               September 2020
 
 
 
-Thubert & Zhao           Expires March 13, 2021                [Page 10]
+Thubert & Zhao           Expires March 14, 2021                [Page 10]
