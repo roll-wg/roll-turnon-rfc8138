@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-16">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-17">
 <front>
 
    <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
@@ -201,13 +201,14 @@
 
 <figure anchor="RPLDCO">
           <name>DODAG Configuration Option (Partial View) </name>
-       <artwork align="center" name="" type="" alt="">
+       <artwork align="center" name="" type="" alt=""><![CDATA[
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |   Type = 0x04 |Opt Length = 14| | |T| |A|       ...           |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                     +
-</artwork>
+                                <- Flags ->
+]]></artwork>
 </figure>
 
       <t>
@@ -221,10 +222,8 @@
    </t>
    <t>
    Section 4.3 of <xref target='I-D.ietf-roll-useofrplinfo'/> updates
-   <xref target='RFC6550'/> to indicate that the definition of the Flags applies to Mode of Operation (MOP) values zero (0) to six (6) only,
-   leaving the flags reserved for MOP value seven (7).
-   For a MOP value of 7, the bit in position 2 is considered unallocated
-   and <xref target='RFC8138'/> MUST be used on Links where 6LoWPAN Header
+   <xref target='RFC6550'/> to indicate that the definition of the Flags applies to Mode of Operation (MOP) values zero (0) to six (6) only.
+   For a MOP value of 7, <xref target='RFC8138'/> MUST be used on Links where 6LoWPAN Header
    Compression <xref target='RFC6282'/> applies and MUST NOT be used otherwise.
 
    </t>
@@ -381,11 +380,14 @@
    </section> <!-- Transition Scenarios -->
 
    <section anchor="iana"><name>IANA Considerations</name>
-
-    <t>
+       <t>
+    This specification updates the Registry that was created for <xref target='RFC6550'/> as the registry for "DODAG Configuration Option Flags" and updated as the registry for "DODAG Configuration Option Flags for MOP 0..6" by <xref target='I-D.ietf-roll-useofrplinfo'/>, by allocating one
+    new Flag as follows:
+<!--
     IANA is requested to assign a new option flag from the Registry for the
     "DODAG Configuration Option Flags" that was created for
-    <xref target='RFC6550'/> as follows:
+    <xref target='RFC6550'/>  and updated as the registry for "DODAG Configuration Option Flags for MOP 0..6" by <xref target='I-D.ietf-roll-useofrplinfo'/>as follows:
+ -->
     </t>
 
    <table  anchor="nexndopt"><name>New DODAG Configuration Option Flag</name>
