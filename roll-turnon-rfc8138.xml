@@ -13,7 +13,7 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="6550,8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-16">
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true"  obsoletes="" updates="8138" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-ietf-roll-turnon-rfc8138-16">
 <front>
 
    <title abbrev='Turn On 6LoRH'>A RPL DODAG Configuration Option for the 6LoWPAN Routing Header</title>
@@ -187,7 +187,7 @@
 </section>	<!-- end section "Terminology" -->
 
 
-   <section><name>Updating RFC 6550</name>
+   <section><name>Extending RFC 6550</name>
    <t>
    The DODAG Configuration Option is defined in Section 6.7.6 of <xref target=
    'RFC6550'/>. Its purpose is extended to distribute configuration
@@ -196,45 +196,47 @@
 
    As shown in <xref target="RPLDCO"/>, the Option was originally
    designed with 4 bit positions reserved for future use as Flags.
+
    </t>
 
 <figure anchor="RPLDCO">
           <name>DODAG Configuration Option (Partial View) </name>
-       <artwork align="center" name="" type="" alt=""><![CDATA[
+       <artwork align="center" name="" type="" alt="">
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |   Type = 0x04 |Opt Length = 14| | |T| |A|       ...           |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                     +
-]]></artwork>
+</artwork>
 </figure>
 
-   <t>
+      <t>
    This specification defines a new flag "Enable RFC8138 Compression" (T).
    The "T" flag is set to turn-on the use of
    <xref target='RFC8138'/> within the DODAG. The "T" flag is encoded
    in position 2 of the reserved Flags in the DODAG Configuration Option (counting from bit 0 as the most significant bit) and set to 0 in
    legacy implementations as specified respectively in Sections 20.14 and 6.7.6
    of <xref target='RFC6550'/>.
+
+   </t>
+   <t>
+   Section 4.3 of <xref target='I-D.ietf-roll-useofrplinfo'/> updates
+   <xref target='RFC6550'/> to indicate that the definition of the Flags applies to Mode of Operation (MOP) values zero (0) to six (6) only,
+   leaving the flags reserved for MOP value seven (7).
+   For a MOP value of 7, the bit in position 2 is considered unallocated
+   and <xref target='RFC8138'/> MUST be used on Links where 6LoWPAN Header
+   Compression <xref target='RFC6282'/> applies and MUST NOT be used otherwise.
+
    </t>
       <t>
    The RPL DODAG Configuration Option is typically placed in
    a DODAG Information Object (DIO) message. The DIO message propagates down the
    DODAG to form and then maintain its structure. The DODAG Configuration Option
    is copied unmodified from parents to children.
-      </t>
-
-   <t>
-   Section 6.3.1 of <xref target='RFC6550'/>  defines a 3-bit Mode of Operation
-   (MOP) in the DIO Base Object. This specification applies to MOP values 0 to 6.
-   For a MOP value of 7, the bit in position 2 is considered unallocated and <xref target='RFC8138'/> MUST be used by default.
-   </t>
-   <t>
    <xref target='RFC6550'/> states that "Nodes other than the DODAG Root MUST
    NOT modify this information when propagating the DODAG Configuration option".
-   Therefore, a legacy parent propagates the "T" flag as set by the Root
-   whether it supports this specification or not. So when the "T" flag is set,
-   it is transparently flooded to all the nodes in the DODAG.
+   Therefore, a legacy parent propagates the "T" flag as set by the Root, and
+   when the "T" flag is set, it is transparently flooded to all the nodes in the DODAG.
   </t>
    </section><!-- Updating RFC 6550 was: The RPL DODAG Configuration Option -->
 
@@ -492,6 +494,7 @@
 
    </references>
    <references><name>Informative References</name>
+   	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6282.xml'/> <!-- 6lowpan HC -->
    	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6553.xml'/> <!-- RPI -->
   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7228.xml'/> <!-- termonology -->
 
